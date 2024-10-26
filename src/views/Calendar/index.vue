@@ -3,6 +3,8 @@ import {ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronDownIcon, PlayIcon
 import {computed, reactive, ref, watch} from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw'; 
+import emitter from '@/utils/emitter';
+
 
 dayjs.locale('zh-tw');
 
@@ -93,7 +95,7 @@ const show = ref(false);
     <div class="days-container">
       <span v-for="item in weekday" class="weekday">{{ item }}</span>
       <div v-for="item in dayList"  class="day-container">
-        <div :class="{icon : item.day}" @click="console.log(item)">
+        <div :class="{icon : item.day}" @click="emitter.emit('open-post',true)">
         </div>
         <span class="day">
           {{ item.day }}

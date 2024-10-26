@@ -12,6 +12,7 @@
   "dependencies": {
     "@heroicons/vue": "^2.1.5",
     "dayjs": "^1.11.13",
+    "mitt": "^3.0.1",
     "pinia": "^2.2.4",
     "unplugin-vue-setup-extend-plus": "^1.0.1",
     "vant": "^4.9.8",

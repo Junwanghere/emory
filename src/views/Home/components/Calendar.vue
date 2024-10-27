@@ -1,64 +1,51 @@
 <script setup name="Calendar">
 import {ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronDownIcon, PlayIcon} from '@heroicons/vue/20/solid'
-import {computed, reactive, ref, watch} from 'vue'
+import {computed, reactive, ref, toRefs, watch} from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw'; 
-import emitter from '@/utils/emitter';
+import { useDateStore } from '@/stores/date';
+import { useRouter } from 'vue-router';
 
 
+const { selectedYear, setMonth, selectedMonth } = toRefs(useDateStore())
 dayjs.locale('zh-tw');
-
 const weekday = ['日','一','二','三','四','五','六']
-
-const selectYear = ref(dayjs().year())
-const selectMonth = ref(dayjs().month()+1)
-
-const modifyMonth = (value) => {
-  selectMonth.value+=value
-}
-
-// 控制月份選擇範圍
-watch(selectMonth,(nv)=>{
-  if(nv >= 12){
-    selectMonth.value = 12
-  }else if (nv <= 1){
-    selectMonth.value = 0
-  }
-})
 
 // 獲得各月有幾點
 const daysInMonth = computed(()=>{
-  return dayjs(`${selectYear.value}-${selectMonth.value }`).daysInMonth()
+  return dayjs(`${selectedYear.value}-${selectedMonth.value }`).daysInMonth()
 })
 
 // 轉換月份格式
 const numberToMonth = computed(() => {
-  return dayjs(`${selectMonth.value }`, 'M').format('MMMM')
+  return dayjs(`${selectedMonth.value }`, 'M').format('MMMM')
 })
+
+
 
 // 根據該年該月生成日立
 let dayList = reactive([])
-watch([selectYear, selectMonth],() => {
-  const firtDayOfMonth = dayjs(`${selectYear.value}-${selectMonth.value }`).format('d')
+watch([selectedYear, selectedMonth],() => {
+  const firtDayOfMonth = dayjs(`${selectedYear.value}-${selectedMonth.value }`).format('d')
   dayList = []
   for(let i = 0; i < firtDayOfMonth; i++){
     dayList.push({
-      year: selectYear.value,
-      month: selectMonth.value,
-      day: ''
+      year: selectedYear.value,
+      month: selectedMonth.value,
+      date: ''
     })
   }
   for(let i = 1; i < (daysInMonth.value + 1); i++){
     dayList.push({
-      year: selectYear.value,
-      month: selectMonth.value,
-      day: i
+      year: selectedYear.value,
+      month: selectedMonth.value,
+      date: i,
+      day: dayjs(`${selectedYear.value}-${selectedMonth.value}-${i}`).format('dddd')
     })
   }
 },{immediate: true})
 
-
-const currentDate = ref([`${selectYear.value}`, `${selectMonth.value}`])
+const currentDate = ref([`${selectedYear.value}`, `${selectedMonth.value}`])
 const columnType = ['year', 'month']
 const minDate = new Date(1900, 0)
 const maxDate = computed(() => {
@@ -66,8 +53,8 @@ const maxDate = computed(() => {
 })
 
 const handleConfirm = () => {
-  selectYear.value = currentDate.value[0]
-  selectMonth.value = +currentDate.value[1]
+  selectedYear.value = +currentDate.value[0]
+  selectedMonth.value = +currentDate.value[1]
   show.value = false
 }
 
@@ -75,30 +62,38 @@ const handleCancel = () => {
   show.value = false
 }
 
-
 const show = ref(false);
+
+const router = useRouter()
+
+const openPost = (item) => {
+  router.push({
+    name: 'post',
+    query: item
+  })
+}
 </script>
 
 <template>
   <div class="calendar-container">
     <div class="header">
       <div class="year-section" @click="show = !show">
-        <span class="year">{{ selectYear }}</span>
+        <span class="year">{{ selectedYear }}</span>
         <PlayIcon class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90"/>
       </div>
       <div class="selectBar">
-        <ChevronDoubleLeftIcon @click="modifyMonth(-1)" class="hover:cursor-pointer	 size-7 font-bold"></ChevronDoubleLeftIcon>
+        <ChevronDoubleLeftIcon @click="setMonth(-1)" class="hover:cursor-pointer	 size-7 font-bold"></ChevronDoubleLeftIcon>
         <span class="month" @click="show = true">{{ numberToMonth }}</span>    
-        <ChevronDoubleRightIcon @click="modifyMonth(1)" class="hover:cursor-pointer size-7 font-bold"></ChevronDoubleRightIcon>
+        <ChevronDoubleRightIcon @click="setMonth(1)" class="hover:cursor-pointer size-7 font-bold"></ChevronDoubleRightIcon>
       </div>
     </div>
     <div class="days-container">
       <span v-for="item in weekday" class="weekday">{{ item }}</span>
       <div v-for="item in dayList"  class="day-container">
-        <div :class="{icon : item.day}" @click="emitter.emit('open-post',true)">
+        <div :class="{icon : item.date}" @click="openPost(item)">
         </div>
-        <span class="day">
-          {{ item.day }}
+        <span class="date">
+          {{ item.date }}
         </span>
       </div>
     </div>
@@ -161,7 +156,7 @@ const show = ref(false);
   justify-self: end;
 }
 
-.day {
+.date {
   font-size: 0.8rem;
 }
 

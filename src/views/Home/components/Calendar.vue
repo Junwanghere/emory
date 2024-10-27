@@ -211,7 +211,7 @@ const openPost = (item) => {
   color: white;
   display: inline-block;
   background-color: gray;
-  padding: 0 0.5rem;
+  padding: 0 0.35rem;
   border-radius: 1rem;
 }
 </style>

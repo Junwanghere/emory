@@ -4,22 +4,24 @@ import { useDateStore } from '@/stores/date';
 import { toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
+import { postUploadImgAPI, postNewPostAPI } from '@/apis/post.js'
 
-const {selectedYear, selectedMonth, selectedDate, selectedDay} = toRefs(useDateStore())
+
+const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDateStore())
 const router = useRouter()
 const route = useRoute()
 
 const getData = () => {
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   const data = JSON.parse(localStorage.getItem(userSelectDate))
-  if(data){
+  if (data) {
     dailyContent.value = data.dailyContent
     imagePreview.value = data.imgUrl
   }
 }
 
 onMounted(() => {
-  const {date, day}= route.query
+  const { date, day } = route.query
   selectedDate.value = date
   selectedDay.value = day
   getData()
@@ -29,21 +31,23 @@ onMounted(() => {
 const active = ref(0)
 
 const dailyContent = ref('')
-
-const afterRead = (file) => {
-  imagePreview.value = file.objectUrl
+// 用戶上傳照片
+const afterRead = async (file) => {
+  imagePreview.value = await postUploadImgAPI(file)
 }
 
 const imagePreview = ref('')
 
-const closePopup = () =>{
+const closePopup = async () => {
   router.push('/home')
   const date = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
+
+  await postNewPostAPI(date, imagePreview.value, dailyContent.value)
   const data = {
     imgUrl: imagePreview.value,
     dailyContent: dailyContent.value
   }
-  if(imagePreview.value || dailyContent.value){
+  if (imagePreview.value || dailyContent.value) {
     localStorage.setItem(date, JSON.stringify(data))
     imagePreview.value = ''
     dailyContent.value = ''
@@ -73,49 +77,40 @@ watch(selectedDate, () => {
     query: data
   })
   getData()
-  })
+})
 
 </script>
 
 <template>
   <div>
     <div class="close-btn" @click="closePopup">
-      <van-icon size="1.2rem" name="cross" color="#000000"/>
+      <van-icon size="1.2rem" name="cross" color="#000000" />
     </div>
 
-    <div  class="img-container">
+    <div class="img-container">
       <img v-if="imagePreview" class="img-preview" :src="imagePreview" alt="圖片預覽" />
     </div>
 
     <van-cell-group inset class="field-container">
-      <van-field
-        class="input-field"
-        v-model="dailyContent"
-        rows="2"
-        autosize
-        :label="`${selectedYear}年${selectedMonth}月${selectedDate}日${selectedDay}`"
-        type="textarea"
-        placeholder="今天過得如何呢？"
-        label-align="top"
-        size="large"
-      />
+      <van-field class="input-field" v-model="dailyContent" rows="2" autosize
+        :label="`${selectedYear}年${selectedMonth}月${selectedDate}日${selectedDay}`" type="textarea"
+        placeholder="今天過得如何呢？" label-align="top" size="large" />
     </van-cell-group>
     <van-tabbar v-model="active" :border="true" :safe-area-inset-bottom="true" :fixed="true">
       <van-tabbar-item @click="changeDay(-1)" name="left-arrow" icon="arrow-left"></van-tabbar-item>
       <van-tabbar-item>
         <template #icon>
-          <van-uploader :after-read="afterRead" accept=".jpg,.jpeg,.png" >
+          <van-uploader :after-read="afterRead" accept=".jpg,.jpeg,.png">
             <van-icon name="photo-o" />
           </van-uploader>
         </template>
       </van-tabbar-item>
       <van-tabbar-item @click=changeDay(1) name="right-arrow" icon="arrow"></van-tabbar-item>
     </van-tabbar>
-</div>
+  </div>
 </template>
 
 <style scoped>
-
 .image-preview {
   width: 100%;
   height: 100%;
@@ -154,6 +149,6 @@ watch(selectedDate, () => {
 
 .field-container {
   width: 90%;
-  margin:0 auto;  
+  margin: 0 auto;
 }
 </style>

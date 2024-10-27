@@ -7,7 +7,7 @@ import { useDateStore } from '@/stores/date';
 import { useRouter } from 'vue-router';
 
 
-const { selectedYear, setMonth, selectedMonth } = toRefs(useDateStore())
+const { selectedYear, setMonth, selectedMonth, yearOfToday, monthOfToday, dateOfToday } = toRefs(useDateStore())
 dayjs.locale('zh-tw');
 const weekday = ['日','一','二','三','四','五','六']
 
@@ -44,6 +44,13 @@ watch([selectedYear, selectedMonth],() => {
     })
   }
 },{immediate: true})
+
+const matchToday = (item) => {
+  if(item.year == yearOfToday.value && item.month == monthOfToday.value && item.date == dateOfToday.value){
+    return true
+  }
+}
+
 
 const currentDate = ref([`${selectedYear.value}`, `${selectedMonth.value}`])
 const columnType = ['year', 'month']
@@ -92,7 +99,7 @@ const openPost = (item) => {
       <div v-for="item in dayList"  class="day-container">
         <div :class="{icon : item.date}" @click="openPost(item)">
         </div>
-        <span class="date">
+        <span class="date" :class="{ highlight : matchToday(item)}">
           {{ item.date }}
         </span>
       </div>
@@ -198,5 +205,13 @@ const openPost = (item) => {
   justify-content: space-between;
   align-items: center;
   margin-top: 1.5rem;
+}
+
+.highlight {
+  color: white;
+  display: inline-block;
+  background-color: gray;
+  padding: 0 0.5rem;
+  border-radius: 1rem;
 }
 </style>

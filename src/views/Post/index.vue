@@ -73,9 +73,7 @@ watch(selectedDate, () => {
     query: data
   })
   getData()
-  },{
-  immediate: true
-})
+  })
 
 </script>
 

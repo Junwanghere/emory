@@ -27,6 +27,9 @@ export const useDateStore = defineStore('date',() => {
   })
 
   const setMonth = (value) => {
+    if(selectedYear.value == yearOfToday.value && selectedMonth.value == monthOfToday.value && value == 1){
+      return
+     }
     selectedMonth.value += value
      if(selectedMonth.value > 12){
       selectedMonth.value = 12
@@ -34,6 +37,7 @@ export const useDateStore = defineStore('date',() => {
      if(selectedMonth.value < 1){
       selectedMonth.value = 1
      }
+
   }
 
   const selectYear = (value) => {

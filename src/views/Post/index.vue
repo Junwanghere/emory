@@ -1,24 +1,28 @@
 <script setup>
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
-import emitter from '@/utils/emitter';
+import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useDateStore } from '@/stores/date';
 import { toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import dayjs from 'dayjs';
 
 const {selectedYear, selectedMonth, selectedDate, selectedDay} = toRefs(useDateStore())
 const router = useRouter()
 const route = useRoute()
 
-onMounted(() => {
-  const {date, day}= route.query
-  selectedDate.value = date
-  selectedDay.value = day
+const getData = () => {
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   const data = JSON.parse(localStorage.getItem(userSelectDate))
   if(data){
     dailyContent.value = data.dailyContent
     imagePreview.value = data.imgUrl
   }
+}
+
+onMounted(() => {
+  const {date, day}= route.query
+  selectedDate.value = date
+  selectedDay.value = day
+  getData()
 })
 
 
@@ -45,6 +49,34 @@ const closePopup = () =>{
     dailyContent.value = ''
   }
 }
+
+const changeDay = (value) => {
+  let newDay = dayjs(`${selectedYear.value}-${selectedMonth.value}-${selectedDate.value}`).add(value, 'day').format('YYYY-M-D-dddd')
+  newDay = newDay.split('-')
+  selectedYear.value = newDay[0]
+  selectedMonth.value = newDay[1]
+  selectedDate.value = newDay[2]
+  selectedDay.value = newDay[3]
+}
+
+watch(selectedDate, () => {
+  imagePreview.value = ''
+  dailyContent.value = ''
+  const data = {
+    year: selectedYear.value,
+    month: selectedMonth.value,
+    date: selectedDate.value,
+    day: selectedDay.value
+  }
+  router.push({
+    name: 'post',
+    query: data
+  })
+  getData()
+  },{
+  immediate: true
+})
+
 </script>
 
 <template>
@@ -71,7 +103,7 @@ const closePopup = () =>{
       />
     </van-cell-group>
     <van-tabbar v-model="active" :border="true" :safe-area-inset-bottom="true" :fixed="true">
-      <van-tabbar-item name="left-arrow" icon="arrow-left"></van-tabbar-item>
+      <van-tabbar-item @click="changeDay(-1)" name="left-arrow" icon="arrow-left"></van-tabbar-item>
       <van-tabbar-item>
         <template #icon>
           <van-uploader :after-read="afterRead" accept=".jpg,.jpeg,.png" >
@@ -79,7 +111,7 @@ const closePopup = () =>{
           </van-uploader>
         </template>
       </van-tabbar-item>
-      <van-tabbar-item name="right-arrow" icon="arrow"></van-tabbar-item>
+      <van-tabbar-item @click=changeDay(1) name="right-arrow" icon="arrow"></van-tabbar-item>
     </van-tabbar>
 </div>
 </template>

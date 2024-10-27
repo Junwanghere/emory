@@ -40,7 +40,6 @@ export const useDateStore = defineStore('date',() => {
     selectedYear.value = value
   }
 
-
   const selectedYear = ref(yearOfToday.value)
   const selectedMonth = ref(monthOfToday.value)
   const selectedDate = ref(dateOfToday.value)

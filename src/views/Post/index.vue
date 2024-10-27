@@ -57,7 +57,7 @@ const closePopup = () =>{
       <img v-if="imagePreview" class="img-preview" :src="imagePreview" alt="圖片預覽" />
     </div>
 
-    <van-cell-group inset>
+    <van-cell-group inset class="field-container">
       <van-field
         class="input-field"
         v-model="dailyContent"
@@ -116,6 +116,14 @@ const closePopup = () =>{
   border: 1px solid black
 }
 
-/* .input-field {
-} */
+.input-field {
+  width: 100%;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.field-container {
+  width: 90%;
+  margin:0 auto;  
+}
 </style>

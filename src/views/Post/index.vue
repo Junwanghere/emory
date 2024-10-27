@@ -53,9 +53,9 @@ const closePopup = () =>{
 const changeDay = (value) => {
   let newDay = dayjs(`${selectedYear.value}-${selectedMonth.value}-${selectedDate.value}`).add(value, 'day').format('YYYY-M-D-dddd')
   newDay = newDay.split('-')
-  selectedYear.value = newDay[0]
-  selectedMonth.value = newDay[1]
-  selectedDate.value = newDay[2]
+  selectedYear.value = +newDay[0]
+  selectedMonth.value = +newDay[1]
+  selectedDate.value = +newDay[2]
   selectedDay.value = newDay[3]
 }
 

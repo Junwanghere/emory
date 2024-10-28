@@ -11,7 +11,20 @@ const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDat
 const router = useRouter()
 const route = useRoute()
 
+let compareData = reactive({
+  date:'',
+  imgUrl:'',
+  postContent:''
+})
+
+const resetCompareData = {
+  date:'',
+  imgUrl:'',
+  postContent:''
+}
+
 const getDiaryData = async () => {
+  // 目前會把上一天的資料渲染到選的下一天
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   const response = await postGetDiaryAPI(userSelectDate)
   return response
@@ -39,24 +52,28 @@ const afterRead = async (file) => {
 
 const imagePreview = ref('')
 
-const closePopup = async () => {
-  router.push('/home')
+const postDiary = async () => {
+  // 進行一次資料校驗以避免重複請求
   const date = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
-
-  await postNewPostAPI(date, imagePreview.value, dailyContent.value)
-  const data = {
-    imgUrl: imagePreview.value,
-    dailyContent: dailyContent.value
-  }
-  if (imagePreview.value || dailyContent.value) {
-    localStorage.setItem(date, JSON.stringify(data))
-    imagePreview.value = ''
-    dailyContent.value = ''
+  if(compareData.date == date && compareData.imgUrl == imagePreview.value && compareData.postContent == dailyContent.value ){
+    return
+  } else {
+    await postNewPostAPI(date, imagePreview.value, dailyContent.value)
   }
 }
 
-const changeDay = (value) => {
+const closePopup = async () => {
+  // 尚未處理如果出錯的話不要push
+  await postDiary()
+  imagePreview.value = ''
+  dailyContent.value = ''
+  Object.assign(compareData, resetCompareData)
+  router.push('/home')
+}
+
+const changeDay = async (value) => {
   // 點選換天時，改變路由，改使用者選擇日期的數據
+  await postDiary()
   let newDay = dayjs(`${selectedYear.value}-${selectedMonth.value}-${selectedDate.value}`).add(value, 'day').format('YYYY-M-D-dddd')
   newDay = newDay.split('-')
   selectedYear.value = +newDay[0]
@@ -64,12 +81,14 @@ const changeDay = (value) => {
   selectedDate.value = +newDay[2]
   selectedDay.value = newDay[3]
   
+
   const data = {
     year: selectedYear.value,
     month: selectedMonth.value,
     date: selectedDate.value,
     day: selectedDay.value
   }
+
   router.push({
     name: 'post',
     query: data
@@ -81,6 +100,7 @@ watch(() => route.query.date, async () => {
   dailyContent.value = ''
   const res = await getDiaryData()
   if(res){
+    Object.assign(compareData, res)
     imagePreview.value = res.imgUrl
     dailyContent.value =  res.postContent
   }

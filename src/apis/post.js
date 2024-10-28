@@ -5,12 +5,13 @@ import {  ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storag
 export const postNewPostAPI = async (date, imgUrl, postContent) => {
   try {
     const diaryRef = doc(db, 'diaries', `${date}`)
-    await setDoc(diaryRef, {  
+    await setDoc(diaryRef, 
+    {  
       date,
       imgUrl,
       postContent
-    }, { merge: true})
-    console.log('success!');
+    }, 
+    { merge: true})
   } catch (e) {
     console.error("Error adding document: ", e);
   }

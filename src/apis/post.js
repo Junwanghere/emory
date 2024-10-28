@@ -1,16 +1,16 @@
-import { addDoc, collection } from 'firebase/firestore';
-import { storage, db } from '@/firebase';
+import { setDoc , collection, query, where, getDocs, doc } from 'firebase/firestore';
+import { storage, db, } from '@/firebase';
 import {  ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const postNewPostAPI = async (date, imgUrl, postContent) => {
   try {
-    const docRef = await addDoc(collection(db, "diaries"), {
+    const diaryRef = doc(db, 'diaries', `${date}`)
+    await setDoc(diaryRef, {  
       date,
       imgUrl,
-      postContent,
-      createdAt: new Date()
-    });
-    console.log("Document written with ID: ", docRef.id);
+      postContent
+    }, { merge: true})
+    console.log('success!');
   } catch (e) {
     console.error("Error adding document: ", e);
   }
@@ -33,3 +33,12 @@ export const postUploadImgAPI = async (file) => {
   }
 }
 
+export const postGetDiaryAPI = async (date) => {
+  const diaryRef = collection(db, 'diaries')
+  const q = query(diaryRef, where('date', '==', `${date}`))
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+  console.log(doc.id, " => ", doc.data());
+
+})}

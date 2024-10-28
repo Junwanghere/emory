@@ -4,15 +4,16 @@ import { useDateStore } from '@/stores/date';
 import { toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
-import { postUploadImgAPI, postNewPostAPI } from '@/apis/post.js'
+import { postUploadImgAPI, postNewPostAPI, postGetDiaryAPI } from '@/apis/post.js'
 
 
 const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDateStore())
 const router = useRouter()
 const route = useRoute()
 
-const getData = () => {
+const getData =  () => {
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
+  postGetDiaryAPI(userSelectDate)
   const data = JSON.parse(localStorage.getItem(userSelectDate))
   if (data) {
     dailyContent.value = data.dailyContent

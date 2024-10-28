@@ -18,7 +18,6 @@ const router = createRouter({
       path: '/post',
       name: 'post',
       component: Post,
-      meta: { transition: 'slide-up' },
     }
   ]
 })

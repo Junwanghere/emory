@@ -11,21 +11,21 @@ const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDat
 const router = useRouter()
 const route = useRoute()
 
-const getData =  () => {
+const getDiaryData = async () => {
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
-  postGetDiaryAPI(userSelectDate)
-  const data = JSON.parse(localStorage.getItem(userSelectDate))
-  if (data) {
-    dailyContent.value = data.dailyContent
-    imagePreview.value = data.imgUrl
-  }
+  const response = await postGetDiaryAPI(userSelectDate)
+  return response
 }
 
-onMounted(() => {
+onMounted(async () => {
   const { date, day } = route.query
   selectedDate.value = date
   selectedDay.value = day
-  getData()
+  const res = await getDiaryData()
+  if(res){
+    imagePreview.value = res.imgUrl
+    dailyContent.value =  res.postContent
+  }
 })
 
 
@@ -56,17 +56,14 @@ const closePopup = async () => {
 }
 
 const changeDay = (value) => {
+  // 點選換天時，改變路由，改使用者選擇日期的數據
   let newDay = dayjs(`${selectedYear.value}-${selectedMonth.value}-${selectedDate.value}`).add(value, 'day').format('YYYY-M-D-dddd')
   newDay = newDay.split('-')
   selectedYear.value = +newDay[0]
   selectedMonth.value = +newDay[1]
   selectedDate.value = +newDay[2]
   selectedDay.value = newDay[3]
-}
-
-watch(selectedDate, () => {
-  imagePreview.value = ''
-  dailyContent.value = ''
+  
   const data = {
     year: selectedYear.value,
     month: selectedMonth.value,
@@ -77,7 +74,16 @@ watch(selectedDate, () => {
     name: 'post',
     query: data
   })
-  getData()
+}
+
+watch(() => route.query.date, async () => {
+  imagePreview.value = ''
+  dailyContent.value = ''
+  const res = await getDiaryData()
+  if(res){
+    imagePreview.value = res.imgUrl
+    dailyContent.value =  res.postContent
+  }
 })
 
 </script>

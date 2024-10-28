@@ -34,11 +34,18 @@ export const postUploadImgAPI = async (file) => {
 }
 
 export const postGetDiaryAPI = async (date) => {
-  const diaryRef = collection(db, 'diaries')
-  const q = query(diaryRef, where('date', '==', `${date}`))
-
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-  console.log(doc.id, " => ", doc.data());
-
-})}
+  try{
+    const diaryRef = collection(db, 'diaries')
+    const q = query(diaryRef, where('date', '==', `${date}`))
+    const querySnapshot = await getDocs(q);
+    if(querySnapshot.empty){
+      return null
+    }else {
+      // 一天只會有一筆日記，這裡面會是一個陣列
+      return querySnapshot.docs[0].data()
+    }
+  } catch(e) {
+    // 尚未處理提示獲取資料出錯的情況
+    console.log('有地方出錯了',e)
+  }
+}

@@ -11,34 +11,43 @@ const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDat
 const router = useRouter()
 const route = useRoute()
 
+const resetDiary = () => {
+  imagePreview.value = ''
+  dailyContent.value = ''
+}
+
 let compareData = reactive({
-  date:'',
-  imgUrl:'',
-  postContent:''
+  date: '',
+  imgUrl: '',
+  postContent: ''
 })
 
-const resetCompareData = {
-  date:'',
-  imgUrl:'',
-  postContent:''
+const resetCompareData = () => {
+  const emptyData = {
+    date: '',
+    imgUrl: '',
+    postContent: ''
+  }
+  Object.assign(compareData, emptyData)
 }
 
 const getDiaryData = async () => {
-  // 目前會把上一天的資料渲染到選的下一天
+  resetCompareData()
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   const response = await postGetDiaryAPI(userSelectDate)
-  return response
+  if (response) {
+    Object.assign(compareData, response)
+    imagePreview.value = response.imgUrl
+    dailyContent.value = response.postContent
+  }
 }
 
 onMounted(async () => {
+  ''
   const { date, day } = route.query
   selectedDate.value = date
   selectedDay.value = day
-  const res = await getDiaryData()
-  if(res){
-    imagePreview.value = res.imgUrl
-    dailyContent.value =  res.postContent
-  }
+  await getDiaryData()
 })
 
 
@@ -55,7 +64,8 @@ const imagePreview = ref('')
 const postDiary = async () => {
   // 進行一次資料校驗以避免重複請求
   const date = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
-  if(compareData.date == date && compareData.imgUrl == imagePreview.value && compareData.postContent == dailyContent.value ){
+  if (compareData.imgUrl == imagePreview.value && compareData.postContent == dailyContent.value) {
+    console.log('true')
     return
   } else {
     await postNewPostAPI(date, imagePreview.value, dailyContent.value)
@@ -63,11 +73,9 @@ const postDiary = async () => {
 }
 
 const closePopup = async () => {
-  // 尚未處理如果出錯的話不要push
   await postDiary()
-  imagePreview.value = ''
-  dailyContent.value = ''
-  Object.assign(compareData, resetCompareData)
+  resetDiary()
+  resetCompareData()
   router.push('/home')
 }
 
@@ -80,7 +88,6 @@ const changeDay = async (value) => {
   selectedMonth.value = +newDay[1]
   selectedDate.value = +newDay[2]
   selectedDay.value = newDay[3]
-  
 
   const data = {
     year: selectedYear.value,
@@ -88,7 +95,7 @@ const changeDay = async (value) => {
     date: selectedDate.value,
     day: selectedDay.value
   }
-
+  console.log(compareData, imagePreview.value, dailyContent.value)
   router.push({
     name: 'post',
     query: data
@@ -96,14 +103,8 @@ const changeDay = async (value) => {
 }
 
 watch(() => route.query.date, async () => {
-  imagePreview.value = ''
-  dailyContent.value = ''
-  const res = await getDiaryData()
-  if(res){
-    Object.assign(compareData, res)
-    imagePreview.value = res.imgUrl
-    dailyContent.value =  res.postContent
-  }
+  resetDiary()
+  await getDiaryData()
 })
 
 </script>

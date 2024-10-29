@@ -39,6 +39,7 @@ export const postGetDiaryAPI = async (date) => {
     const diaryRef = collection(db, 'diaries')
     const q = query(diaryRef, where('date', '==', `${date}`))
     const querySnapshot = await getDocs(q);
+    // 原本無資料會得到空陣列，透過傳null讓前端好做邏輯判斷
     if(querySnapshot.empty){
       return null
     }else {

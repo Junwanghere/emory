@@ -38,7 +38,6 @@ export const postDelImgAPI = async (date) => {
   const diaryImgRef = storageRef(storage, `images/${date}`)
   try{
     await deleteObject(diaryImgRef)
-    console.log('圖片刪除成功！')
   }catch(e){
     console.log(e)
   }

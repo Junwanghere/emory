@@ -33,6 +33,7 @@ const resetCompareData = () => {
 
 const getDiaryData = async () => {
   resetCompareData()
+
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   const response = await postGetDiaryAPI(userSelectDate)
   if (response) {
@@ -56,8 +57,14 @@ const active = ref(0)
 const dailyContent = ref('')
 // 用戶上傳照片
 const afterRead = async (file) => {
+  const toast = showLoadingToast({
+    message: '上傳中',
+    forbidClick: true,
+    loadingType: 'spinner',
+  });
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   imagePreview.value = await postUploadImgAPI(file, userSelectDate)
+  toast.close()
 }
 
 const imagePreview = ref('')
@@ -149,7 +156,11 @@ const onSelect = async (item) => {
       </div>
     </div>
     <div class="img-container">
-      <img v-if="imagePreview" class="img-preview" :src="imagePreview" alt="圖片預覽" />
+      <van-image width="100%" fit="cover" height="100%" :src="imagePreview" v-if="imagePreview">
+        <template v-slot:loading>
+          <van-loading type="spinner" size="20" />
+        </template>
+      </van-image>
     </div>
 
     <van-cell-group inset class="field-container">

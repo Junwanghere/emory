@@ -4,7 +4,7 @@ import { useDateStore } from '@/stores/date';
 import { toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
-import { postUploadImgAPI, postNewPostAPI, postGetDiaryAPI } from '@/apis/post.js'
+import { postUploadImgAPI, postNewPostAPI, postGetDiaryAPI, postDelDiaryAPI, postDelImgAPI } from '@/apis/post.js'
 
 
 const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDateStore())
@@ -56,7 +56,8 @@ const active = ref(0)
 const dailyContent = ref('')
 // 用戶上傳照片
 const afterRead = async (file) => {
-  imagePreview.value = await postUploadImgAPI(file)
+  const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
+  imagePreview.value = await postUploadImgAPI(file, userSelectDate)
 }
 
 const imagePreview = ref('')
@@ -78,8 +79,14 @@ const closePopup = async () => {
   router.push('/home')
 }
 
-const delDiary = () => {
-
+const delDiary = async () => {
+  if (!dailyContent.value && !imagePreview.value) {
+    return
+  }
+  const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
+  await postDelDiaryAPI(userSelectDate)
+  await postDelImgAPI(userSelectDate)
+  resetDiary()
 }
 
 const changeDay = async (value) => {
@@ -110,12 +117,31 @@ watch(() => route.query.date, async () => {
   await getDiaryData()
 })
 
+const showAction = ref(false)
+const actions = [
+  { name: '刪除', color: '#ee0a24' },
+];
+
+const showOptions = () => {
+  showAction.value = true
+}
+
+const onCancel = () => {
+  showAction.value = false
+}
+
+const onSelect = async (item) => {
+  if (item.name == '刪除') {
+    await delDiary()
+  }
+}
+
 </script>
 
 <template>
   <div>
     <div class="btn-container">
-      <div class="ellipsis-btn" @click="delDiary">
+      <div class="ellipsis-btn" @click="showOptions">
         <van-icon size="1.2rem" name="ellipsis" color="#000000" />
       </div>
       <div class="close-btn" @click="closePopup">
@@ -142,6 +168,8 @@ watch(() => route.query.date, async () => {
       </van-tabbar-item>
       <van-tabbar-item @click=changeDay(1) name="right-arrow" icon="arrow"></van-tabbar-item>
     </van-tabbar>
+    <van-action-sheet @select="onSelect" v-model:show="showAction" @cancel="onCancel" :actions="actions"
+      cancel-text="取消" close-on-click-action />
   </div>
 </template>
 

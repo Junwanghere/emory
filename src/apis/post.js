@@ -1,6 +1,6 @@
 import { setDoc , collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { storage, db, } from '@/firebase';
-import {  ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 export const postNewPostAPI = async (date, imgUrl, postContent) => {
   try {
@@ -18,12 +18,12 @@ export const postNewPostAPI = async (date, imgUrl, postContent) => {
 }
 
 
-export const postUploadImgAPI = async (file) => {
+export const postUploadImgAPI = async (file, date) => {
   try{
     // 取出file 實例
     const fileData = file.file
     // 設定要儲存的地方以及名稱
-    const storageReference = storageRef(storage, `images/${fileData.name}`)
+    const storageReference = storageRef(storage, `images/${date}`)
     // 圖片上傳到firebase  storage
     const snapshot = await uploadBytes(storageReference, fileData);
 
@@ -31,6 +31,16 @@ export const postUploadImgAPI = async (file) => {
     return downloadURL
   } catch (e) {
     console.error("圖片上傳失敗：", error);
+  }
+}
+
+export const postDelImgAPI = async (date) => {
+  const diaryImgRef = storageRef(storage, `images/${date}`)
+  try{
+    await deleteObject(diaryImgRef)
+    console.log('圖片刪除成功！')
+  }catch(e){
+    console.log(e)
   }
 }
 

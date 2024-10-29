@@ -1,4 +1,4 @@
-import { setDoc , collection, query, where, getDocs, doc } from 'firebase/firestore';
+import { setDoc , collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { storage, db, } from '@/firebase';
 import {  ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -49,5 +49,15 @@ export const postGetDiaryAPI = async (date) => {
   } catch(e) {
     // 尚未處理提示獲取資料出錯的情況
     console.log('有地方出錯了',e)
+  }
+}
+
+export const postDelDiaryAPI = async (date) => {
+  const diaryRef = doc(db, 'diaries', `${date}`)
+  try{
+    await deleteDoc(diaryRef)
+  }catch(e){
+    // not yet deal with error
+    console.log(e)
   }
 }

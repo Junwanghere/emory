@@ -65,7 +65,6 @@ const postDiary = async () => {
   // 進行一次資料校驗以避免重複請求
   const date = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   if (compareData.imgUrl == imagePreview.value && compareData.postContent == dailyContent.value) {
-    console.log('true')
     return
   } else {
     await postNewPostAPI(date, imagePreview.value, dailyContent.value)
@@ -77,6 +76,10 @@ const closePopup = async () => {
   resetDiary()
   resetCompareData()
   router.push('/home')
+}
+
+const delDiary = () => {
+
 }
 
 const changeDay = async (value) => {
@@ -95,7 +98,7 @@ const changeDay = async (value) => {
     date: selectedDate.value,
     day: selectedDay.value
   }
-  console.log(compareData, imagePreview.value, dailyContent.value)
+
   router.push({
     name: 'post',
     query: data
@@ -111,10 +114,14 @@ watch(() => route.query.date, async () => {
 
 <template>
   <div>
-    <div class="close-btn" @click="closePopup">
-      <van-icon size="1.2rem" name="cross" color="#000000" />
+    <div class="btn-container">
+      <div class="ellipsis-btn" @click="delDiary">
+        <van-icon size="1.2rem" name="ellipsis" color="#000000" />
+      </div>
+      <div class="close-btn" @click="closePopup">
+        <van-icon size="1.2rem" name="cross" color="#000000" />
+      </div>
     </div>
-
     <div class="img-container">
       <img v-if="imagePreview" class="img-preview" :src="imagePreview" alt="圖片預覽" />
     </div>
@@ -145,6 +152,27 @@ watch(() => route.query.date, async () => {
   object-fit: cover;
 }
 
+.btn-container {
+  position: absolute;
+  display: flex;
+  width: 90%;
+  margin: 0 auto;
+  justify-content: end;
+  right: 5%;
+  top: 3%;
+}
+
+.ellipsis-btn {
+  background-color: #e0e0e0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  margin-right: 0.7rem;
+}
+
 .close-btn {
   background-color: #e0e0e0;
   width: 2rem;
@@ -153,12 +181,7 @@ watch(() => route.query.date, async () => {
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
 }
-
-
 
 
 .img-container {

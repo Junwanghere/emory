@@ -1,10 +1,12 @@
 <script setup name="Login">
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { authRegisterAPI } from '@/apis/auth.js'
+import { useRoute, useRouter } from 'vue-router';
 
 
-
+const route = useRoute()
+const router = useRouter()
 
 const displayMode = ref('login')
 const userEmail = ref('')
@@ -36,10 +38,14 @@ const resetInfo = () => {
 const toggleMode = () => {
   if (displayMode.value == 'login') {
     resetInfo()
-    displayMode.value = 'register'
+    router.push({
+      path: 'register'
+    })
   } else {
     resetInfo()
-    displayMode.value = 'login'
+    router.push({
+      path: '/auth'
+    })
   }
 }
 
@@ -65,19 +71,35 @@ const confirmPasswordRule = [
     }, message: '請確認密碼是否一致', trigger: ['onChange', 'onBlur']
   }
 ]
+
+watch(() => {
+  return route.params.mode
+}, () => {
+  displayMode.value = route.params.mode
+} )
+
 </script>
 <template>
   <div class="welcome-sec text-3xl">Welcome!</div>
 
   <van-form v-if="displayMode == 'login'" @submit="onSubmit">
     <van-cell-group inset>
-      <van-field v-model="userEmail" name="Email" label="Email" placeholder="請輸入email" :rules="useremailRule" />
-      <van-field v-model="password" type="password" name="密碼" label="密碼" placeholder="密碼"
-        :rules="[{ required: true, message: '請填寫密碼' }]" />
+      <van-field 
+      v-model="userEmail" 
+      name="Email" 
+      label="Email" 
+      placeholder="請輸入email" 
+      :rules="useremailRule" />
+      <van-field 
+        v-model="password" 
+        type="password" 
+        name="密碼" 
+        label="密碼" 
+        placeholder="密碼"
+        :rules="passwordRule" />
     </van-cell-group>
     <div class="link-container">
-      <a href="#">忘記密碼？</a>
-      <a href="#" @click="toggleMode">還沒有帳號嗎？立即註冊</a>
+      <a href="#" @click="toggleMode">立即註冊</a>
     </div>
 
     <div style="margin: 16px;">
@@ -93,6 +115,7 @@ const confirmPasswordRule = [
       </van-button>
     </div>
   </van-form>
+
   <van-form 
     ref="registerForm" 
     :show-error-message="true"
@@ -135,14 +158,12 @@ const confirmPasswordRule = [
 </template>
 
 <style scoped>
+
 .welcome-sec {
   width: 100%;
   aspect-ratio: 1 / 0.9;
   border: 1px solid black
 }
-
-
-
 
 .van-field__label {
   width: 3rem;

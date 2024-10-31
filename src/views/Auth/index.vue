@@ -101,7 +101,7 @@ watch(() => {
         name="password" 
         label="密碼" 
         placeholder="密碼"
-        :rules="passwordRule" />
+        :rules="[{ required: true, message:'密碼不得為空', trigger: 'onBlur' }]" />
     </van-cell-group>
     <div class="link-container">
       <a href="#" @click="toggleMode">立即註冊</a>

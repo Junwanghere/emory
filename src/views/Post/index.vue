@@ -168,7 +168,7 @@ const onSelect = async (item) => {
         :label="`${selectedYear}年${selectedMonth}月${selectedDate}日${selectedDay}`" type="textarea"
         placeholder="今天過得如何呢？" label-align="top" size="large" />
     </van-cell-group>
-    <van-tabbar v-model="active" :border="true" :safe-area-inset-bottom="true" :fixed="true">
+    <van-tabbar :border="true" :safe-area-inset-bottom="true" :fixed="true">
       <van-tabbar-item @click="changeDay(-1)" name="left-arrow" icon="arrow-left"></van-tabbar-item>
       <van-tabbar-item>
         <template #icon>
@@ -222,7 +222,6 @@ const onSelect = async (item) => {
   border-radius: 50%;
 }
 
-
 .img-container {
   width: 90%;
   margin: 0 auto;
@@ -240,5 +239,9 @@ const onSelect = async (item) => {
 .field-container {
   width: 90%;
   margin: 0 auto;
+}
+
+.van-image {
+  vertical-align: bottom;
 }
 </style>

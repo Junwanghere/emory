@@ -85,11 +85,12 @@ watch(() => {
   <van-form v-if="displayMode == 'login'" @submit="onSubmit">
     <van-cell-group inset>
       <van-field 
-      v-model="userEmail" 
-      name="Email" 
-      label="Email" 
-      placeholder="請輸入email" 
-      :rules="useremailRule" />
+        v-model="userEmail" 
+        name="Email" 
+        label="Email" 
+        placeholder="請輸入email" 
+        :rules="useremailRule" 
+      />
       <van-field 
         v-model="password" 
         type="password" 
@@ -109,9 +110,6 @@ watch(() => {
       <van-button icon="public/official-Google-Logo-PNG-Image.png" @click="loginWithGoogle" style="margin-top: 5px;"
         round block>
         用Google開始
-      </van-button>
-      <van-button style="margin-top: 5px;" round block type="primary">
-        其他登入方式1
       </van-button>
     </div>
   </van-form>

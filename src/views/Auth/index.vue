@@ -1,7 +1,7 @@
 <script setup name="Login">
 import { ref, watch } from 'vue'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { authRegisterAPI } from '@/apis/auth.js'
+import { authRegisterAPI, authLoginAPI } from '@/apis/auth.js'
 import { useRoute, useRouter } from 'vue-router';
 
 
@@ -12,16 +12,20 @@ const displayMode = ref('login')
 const userEmail = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-
 const registerForm = ref(null)
+const loginForm = ref(null)
 
 const onRegister = async () => {
   const res = await authRegisterAPI(userEmail.value, password.value)
   resetInfo()
 }
 
-const onSubmit = () => {
-
+const onSignIn = async () => {
+  const res = await authLoginAPI(userEmail.value, password.value)
+  router.push({
+    name: 'home'
+  })
+  resetInfo()
 }
 
 
@@ -82,7 +86,7 @@ watch(() => {
 <template>
   <div class="welcome-sec text-3xl">Welcome!</div>
 
-  <van-form v-if="displayMode == 'login'" @submit="onSubmit">
+  <van-form ref="loginForm" v-if="displayMode == 'login'" @submit="onSignIn">
     <van-cell-group inset>
       <van-field 
         v-model="userEmail" 
@@ -94,7 +98,7 @@ watch(() => {
       <van-field 
         v-model="password" 
         type="password" 
-        name="密碼" 
+        name="password" 
         label="密碼" 
         placeholder="密碼"
         :rules="passwordRule" />

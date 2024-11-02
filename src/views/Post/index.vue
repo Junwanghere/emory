@@ -5,11 +5,13 @@ import { toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import { postUploadImgAPI, postNewPostAPI, postGetDiaryAPI, postDelDiaryAPI, postDelImgAPI } from '@/apis/post.js'
+import { useUserStore } from '@/stores/user';
 
 
 const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDateStore())
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 
 const resetDiary = () => {
   imagePreview.value = ''
@@ -52,7 +54,6 @@ onMounted(async () => {
 })
 
 
-const active = ref(0)
 
 const dailyContent = ref('')
 // 用戶上傳照片
@@ -63,7 +64,7 @@ const afterRead = async (file) => {
     loadingType: 'spinner',
   });
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
-  imagePreview.value = await postUploadImgAPI(file, userSelectDate)
+  imagePreview.value = await postUploadImgAPI(file, userStore.user.uid, userSelectDate )
   toast.close()
 }
 
@@ -92,7 +93,7 @@ const delDiary = async () => {
   }
   const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   await postDelDiaryAPI(userSelectDate)
-  await postDelImgAPI(userSelectDate)
+  await postDelImgAPI(userStore.user.uid ,userSelectDate)
   resetDiary()
 }
 

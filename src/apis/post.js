@@ -20,12 +20,12 @@ export const postNewPostAPI = async (date, imgUrl, postContent) => {
 }
 
 
-export const postUploadImgAPI = async (file, date) => {
+export const postUploadImgAPI = async (file, uid, date) => {
   try{
     // 取出file 實例
     const fileData = file.file
     // 設定要儲存的地方以及名稱
-    const storageReference = storageRef(storage, `images/${date}`)
+    const storageReference = storageRef(storage, `images/${uid}/${date}`)
     // 圖片上傳到firebase  storage
     const snapshot = await uploadBytes(storageReference, fileData);
 
@@ -36,8 +36,8 @@ export const postUploadImgAPI = async (file, date) => {
   }
 }
 
-export const postDelImgAPI = async (date) => {
-  const diaryImgRef = storageRef(storage, `images/${date}`)
+export const postDelImgAPI = async (uid, date) => {
+  const diaryImgRef = storageRef(storage, `images/${uid}/${date}`)
   try{
     await deleteObject(diaryImgRef)
   }catch(e){

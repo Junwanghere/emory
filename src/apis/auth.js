@@ -2,11 +2,11 @@ import { getAuth,signOut, createUserWithEmailAndPassword, signInWithEmailAndPass
 
 
 
-export const auth = getAuth();
 
 export const authRegisterAPI = async (email, password) => {
   try{
     // 註冊用戶
+    const auth = getAuth();
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const user = userCredential.user  
     return user
@@ -29,6 +29,7 @@ export const authRegisterAPI = async (email, password) => {
 
 export const authLoginAPI = async (email, password) => {
   try{
+    const auth = getAuth();
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
     const user = userCredential.user  
     return user
@@ -41,6 +42,7 @@ export const authLoginAPI = async (email, password) => {
 
 //目前試不成功
 export const signInWithGoogleAPI = () => {
+  const auth = getAuth();
   const provider = new GoogleAuthProvider()
   signInWithRedirect(auth, provider);
 }
@@ -73,6 +75,7 @@ export const signInWithPopupAPI = () => {
 
 export const logOutAPI = async () => {
   try{
+    const auth = getAuth();
     await signOut(auth)
     console.log('登出成功')
   }catch(e){

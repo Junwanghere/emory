@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { onMounted, computed, reactive, ref, watch } from 'vue'
 import { useDateStore } from '@/stores/date';
 import { toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -12,6 +12,10 @@ const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDat
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const userSelectDate = computed(() => {
+  return `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
+})
+
 
 const resetDiary = () => {
   imagePreview.value = ''
@@ -36,8 +40,9 @@ const resetCompareData = () => {
 const getDiaryData = async () => {
   resetCompareData()
 
-  const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
-  const response = await postGetDiaryAPI(userSelectDate)
+  const uid = userStore.user.uid
+  console.log(userSelectDate.value)
+  const response = await postGetDiaryAPI(uid ,userSelectDate.value)
   if (response) {
     Object.assign(compareData, response)
     imagePreview.value = response.imgUrl
@@ -46,7 +51,6 @@ const getDiaryData = async () => {
 }
 
 onMounted(async () => {
-  ''
   const { date, day } = route.query
   selectedDate.value = date
   selectedDay.value = day
@@ -63,8 +67,7 @@ const afterRead = async (file) => {
     forbidClick: true,
     loadingType: 'spinner',
   });
-  const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
-  imagePreview.value = await postUploadImgAPI(file, userStore.user.uid, userSelectDate )
+  imagePreview.value = await postUploadImgAPI(file, userStore.user.uid, userSelectDate.value )
   toast.close()
 }
 
@@ -76,7 +79,8 @@ const postDiary = async () => {
   if (compareData.imgUrl == imagePreview.value && compareData.postContent == dailyContent.value) {
     return
   } else {
-    await postNewPostAPI(date, imagePreview.value, dailyContent.value)
+    const uid = userStore.user.uid
+    await postNewPostAPI(uid, date, imagePreview.value, dailyContent.value)
   }
 }
 
@@ -91,9 +95,9 @@ const delDiary = async () => {
   if (!dailyContent.value && !imagePreview.value) {
     return
   }
-  const userSelectDate = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
-  await postDelDiaryAPI(userSelectDate)
-  await postDelImgAPI(userStore.user.uid ,userSelectDate)
+  const uid = userStore.user.uid
+  await postDelDiaryAPI(uid, userSelectDate.value)
+  await postDelImgAPI(uid ,userSelectDate.value)
   resetDiary()
 }
 
@@ -137,6 +141,8 @@ const showOptions = () => {
 const onCancel = () => {
   showAction.value = false
 }
+
+
 
 const onSelect = async (item) => {
   if (item.name == '刪除') {

@@ -4,9 +4,9 @@ import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "f
 
 //在做這些操作之前都應該檢查一下使用者目前是否有登入
 
-export const postNewPostAPI = async (date, imgUrl, postContent) => {
+export const postNewPostAPI = async (uid, date, imgUrl, postContent) => {
   try {
-    const diaryRef = doc(db, 'diaries', `${date}`)
+    const diaryRef = doc(db, `${uid}`, `${date}`)
     await setDoc(diaryRef, 
     {  
       date,
@@ -25,19 +25,19 @@ export const postUploadImgAPI = async (file, uid, date) => {
     // 取出file 實例
     const fileData = file.file
     // 設定要儲存的地方以及名稱
-    const storageReference = storageRef(storage, `images/${uid}/${date}`)
+    const storageReference = storageRef(storage, `${uid}/images/${date}`)
     // 圖片上傳到firebase  storage
     const snapshot = await uploadBytes(storageReference, fileData);
 
     const downloadURL = await getDownloadURL(snapshot.ref);
     return downloadURL
   } catch (e) {
-    console.error("圖片上傳失敗：", error);
+    console.error("圖片上傳失敗：", e);
   }
 }
 
 export const postDelImgAPI = async (uid, date) => {
-  const diaryImgRef = storageRef(storage, `images/${uid}/${date}`)
+  const diaryImgRef = storageRef(storage, `${uid}/images/${date}`)
   try{
     await deleteObject(diaryImgRef)
   }catch(e){
@@ -45,9 +45,9 @@ export const postDelImgAPI = async (uid, date) => {
   }
 }
 
-export const postGetDiaryAPI = async (date) => {
+export const postGetDiaryAPI = async (uid, date) => {
   try{
-    const diaryRef = collection(db, 'diaries')
+    const diaryRef = collection(db, `${uid}`)
     const q = query(diaryRef, where('date', '==', `${date}`))
     const querySnapshot = await getDocs(q);
     // 原本無資料會得到空陣列，透過傳null讓前端好做邏輯判斷
@@ -63,8 +63,8 @@ export const postGetDiaryAPI = async (date) => {
   }
 }
 
-export const postDelDiaryAPI = async (date) => {
-  const diaryRef = doc(db, 'diaries', `${date}`)
+export const postDelDiaryAPI = async (uid, date) => {
+  const diaryRef = doc(db, `${uid}`, `${date}`)
   try{
     await deleteDoc(diaryRef)
   }catch(e){

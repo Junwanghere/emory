@@ -26,12 +26,15 @@ const onRegister = async () => {
 
 const onSignIn = async () => {
   const res = await authLoginAPI(userEmail.value, password.value)
-  console.log(res)
-  userStore.setUser(res)
-  router.push({
-    name: 'home'
-  })
-  resetInfo()
+  if(res){
+    userStore.setUser(res)
+    router.push({
+      name: 'home'
+    })
+    resetInfo()
+  }else{
+    console.log('密碼錯誤 ')
+  }
 }
 
 

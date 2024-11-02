@@ -6,6 +6,7 @@ import 'dayjs/locale/zh-tw';
 import { useDateStore } from '@/stores/date';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import { logOutAPI } from '@/apis/auth';
 
 
 const userStore = useUserStore()
@@ -84,18 +85,19 @@ const openPost = (item) => {
   })
 }
 
-const userLogout = () => {
+const userSignOut = () => {
   showConfirmDialog({
-  title: '小提醒',
-  message:
-    '你確定要登出嗎？',
-  confirmButtonText:
-    '確定',
-    cancelButtonText:
-    '取消'
+    title: '小提醒',
+    message:
+      '你確定要登出嗎？',
+    confirmButtonText:
+      '確定',
+      cancelButtonText:
+      '取消'
   })
-    .then(() => {
+    .then(async () => {
       userStore.setUser(null)
+      await logOutAPI()
       router.push({
         path: '/auth',
       })
@@ -109,7 +111,7 @@ const userLogout = () => {
 <template>
   <div class="calendar-container">
     <div class="header">
-      <span @click="userLogout" class="absolute top-3 right-5">登出</span>
+      <span @click="userSignOut" class="absolute top-3 right-5">登出</span>
       <div class="year-section" @click="show = !show">
         <span class="year">{{ selectedYear }}</span>
         <PlayIcon class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90"/>

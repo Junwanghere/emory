@@ -2,6 +2,8 @@ import { setDoc , collection, query, where, getDocs, doc, deleteDoc } from 'fire
 import { storage, db, } from '@/firebase';
 import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
+//在做這些操作之前都應該檢查一下使用者目前是否有登入
+
 export const postNewPostAPI = async (date, imgUrl, postContent) => {
   try {
     const diaryRef = doc(db, 'diaries', `${date}`)

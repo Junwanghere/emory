@@ -1,10 +1,11 @@
 <script setup name="Login">
-import { ref, watch } from 'vue'
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { authRegisterAPI, authLoginAPI } from '@/apis/auth.js'
+import {  ref, watch } from 'vue'
+import { authRegisterAPI, authLoginAPI, signInWithGoogleAPI, signInWithPopupAPI } from '@/apis/auth.js'
 import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 
+const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -16,12 +17,17 @@ const registerForm = ref(null)
 const loginForm = ref(null)
 
 const onRegister = async () => {
-  const res = await authRegisterAPI(userEmail.value, password.value)
+  await authRegisterAPI(userEmail.value, password.value)
   resetInfo()
+  router.push({
+    path: '/auth'
+  })
 }
 
 const onSignIn = async () => {
   const res = await authLoginAPI(userEmail.value, password.value)
+  console.log(res)
+  userStore.setUser(res)
   router.push({
     name: 'home'
   })
@@ -30,8 +36,15 @@ const onSignIn = async () => {
 
 
 const loginWithGoogle = () => {
-
+  const res = signInWithPopupAPI()
+  userStore.setUser(res)
+  router.push({
+    name: 'auth'
+  })
 }
+
+
+
 
 const resetInfo = () => {
   userEmail.value = ''
@@ -80,7 +93,7 @@ watch(() => {
   return route.params.mode
 }, () => {
   displayMode.value = route.params.mode
-} )
+},{immediate: true} )
 
 </script>
 <template>

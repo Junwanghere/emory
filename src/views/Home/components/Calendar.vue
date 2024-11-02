@@ -4,9 +4,11 @@ import {computed, reactive, ref, toRefs, watch} from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw'; 
 import { useDateStore } from '@/stores/date';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 
+const userStore = useUserStore()
 const { selectedYear, setMonth, selectedMonth, yearOfToday, monthOfToday, dateOfToday } = toRefs(useDateStore())
 dayjs.locale('zh-tw');
 const weekday = ['日','一','二','三','四','五','六']
@@ -52,6 +54,8 @@ const matchToday = (item) => {
 }
 
 
+
+
 const currentDate = ref([`${selectedYear.value}`, `${selectedMonth.value}`])
 const columnType = ['year', 'month']
 const minDate = new Date(1900, 0)
@@ -79,11 +83,33 @@ const openPost = (item) => {
     query: item
   })
 }
+
+const userLogout = () => {
+  showConfirmDialog({
+  title: '小提醒',
+  message:
+    '你確定要登出嗎？',
+  confirmButtonText:
+    '確定',
+    cancelButtonText:
+    '取消'
+  })
+    .then(() => {
+      userStore.setUser(null)
+      router.push({
+        path: '/auth',
+      })
+    })
+    .catch(() => {
+    });
+}
+
 </script>
 
 <template>
   <div class="calendar-container">
     <div class="header">
+      <span @click="userLogout" class="absolute top-3 right-5">登出</span>
       <div class="year-section" @click="show = !show">
         <span class="year">{{ selectedYear }}</span>
         <PlayIcon class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90"/>
@@ -214,4 +240,5 @@ const openPost = (item) => {
   padding: 0 0.35rem;
   border-radius: 1rem;
 }
+
 </style>

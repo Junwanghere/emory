@@ -41,8 +41,7 @@ const getDiaryData = async () => {
   resetCompareData()
 
   const uid = userStore.user.uid
-  console.log(userSelectDate.value)
-  const response = await postGetDiaryAPI(uid ,userSelectDate.value)
+  const response = await postGetDiaryAPI(uid, userSelectDate.value)
   if (response) {
     Object.assign(compareData, response)
     imagePreview.value = response.imgUrl
@@ -67,7 +66,7 @@ const afterRead = async (file) => {
     forbidClick: true,
     loadingType: 'spinner',
   });
-  imagePreview.value = await postUploadImgAPI(file, userStore.user.uid, userSelectDate.value )
+  imagePreview.value = await postUploadImgAPI(file, userStore.user.uid, userSelectDate.value)
   toast.close()
 }
 
@@ -97,7 +96,7 @@ const delDiary = async () => {
   }
   const uid = userStore.user.uid
   await postDelDiaryAPI(uid, userSelectDate.value)
-  await postDelImgAPI(uid ,userSelectDate.value)
+  await postDelImgAPI(uid, userSelectDate.value)
   resetDiary()
 }
 

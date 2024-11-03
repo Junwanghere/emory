@@ -1,8 +1,8 @@
 <script setup name="Calendar">
-import {ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronDownIcon, PlayIcon} from '@heroicons/vue/20/solid'
-import {computed, reactive, ref, toRefs, watch} from 'vue'
+import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronDownIcon, PlayIcon } from '@heroicons/vue/20/solid'
+import { computed, reactive, ref, toRefs, watch } from 'vue'
 import dayjs from 'dayjs';
-import 'dayjs/locale/zh-tw'; 
+import 'dayjs/locale/zh-tw';
 import { useDateStore } from '@/stores/date';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
@@ -12,33 +12,33 @@ import { logOutAPI } from '@/apis/auth';
 const userStore = useUserStore()
 const { selectedYear, setMonth, selectedMonth, yearOfToday, monthOfToday, dateOfToday } = toRefs(useDateStore())
 dayjs.locale('zh-tw');
-const weekday = ['日','一','二','三','四','五','六']
+const weekday = ['日', '一', '二', '三', '四', '五', '六']
 
 // 獲得各月有幾點
-const daysInMonth = computed(()=>{
-  return dayjs(`${selectedYear.value}-${selectedMonth.value }`).daysInMonth()
+const daysInMonth = computed(() => {
+  return dayjs(`${selectedYear.value}-${selectedMonth.value}`).daysInMonth()
 })
 
 // 轉換月份格式
 const numberToMonth = computed(() => {
-  return dayjs(`${selectedMonth.value }`, 'M').format('MMMM')
+  return dayjs(`${selectedMonth.value}`, 'M').format('MMMM')
 })
 
 
 
 // 根據該年該月生成日立
 let dayList = reactive([])
-watch([selectedYear, selectedMonth],() => {
-  const firtDayOfMonth = dayjs(`${selectedYear.value}-${selectedMonth.value }`).format('d')
+watch([selectedYear, selectedMonth], () => {
+  const firtDayOfMonth = dayjs(`${selectedYear.value}-${selectedMonth.value}`).format('d')
   dayList = []
-  for(let i = 0; i < firtDayOfMonth; i++){
+  for (let i = 0; i < firtDayOfMonth; i++) {
     dayList.push({
       year: selectedYear.value,
       month: selectedMonth.value,
       date: ''
     })
   }
-  for(let i = 1; i < (daysInMonth.value + 1); i++){
+  for (let i = 1; i < (daysInMonth.value + 1); i++) {
     dayList.push({
       year: selectedYear.value,
       month: selectedMonth.value,
@@ -46,10 +46,10 @@ watch([selectedYear, selectedMonth],() => {
       day: dayjs(`${selectedYear.value}-${selectedMonth.value}-${i}`).format('dddd')
     })
   }
-},{immediate: true})
+}, { immediate: true })
 
 const matchToday = (item) => {
-  if(item.year == yearOfToday.value && item.month == monthOfToday.value && item.date == dateOfToday.value){
+  if (item.year == yearOfToday.value && item.month == monthOfToday.value && item.date == dateOfToday.value) {
     return true
   }
 }
@@ -92,7 +92,7 @@ const userSignOut = () => {
       '你確定要登出嗎？',
     confirmButtonText:
       '確定',
-      cancelButtonText:
+    cancelButtonText:
       '取消'
   })
     .then(async () => {
@@ -114,41 +114,29 @@ const userSignOut = () => {
       <span @click="userSignOut" class="absolute top-3 right-5">登出</span>
       <div class="year-section" @click="show = !show">
         <span class="year">{{ selectedYear }}</span>
-        <PlayIcon class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90"/>
+        <PlayIcon class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90" />
       </div>
       <div class="selectBar">
-        <ChevronDoubleLeftIcon @click="setMonth(-1)" class="hover:cursor-pointer	 size-7 font-bold"></ChevronDoubleLeftIcon>
-        <span class="month" @click="show = true">{{ numberToMonth }}</span>    
-        <ChevronDoubleRightIcon @click="setMonth(1)" class="hover:cursor-pointer size-7 font-bold"></ChevronDoubleRightIcon>
+        <ChevronDoubleLeftIcon @click="setMonth(-1)" class="hover:cursor-pointer	 size-7 font-bold">
+        </ChevronDoubleLeftIcon>
+        <span class="month" @click="show = true">{{ numberToMonth }}</span>
+        <ChevronDoubleRightIcon @click="setMonth(1)" class="hover:cursor-pointer size-7 font-bold">
+        </ChevronDoubleRightIcon>
       </div>
     </div>
     <div class="days-container">
       <span v-for="item in weekday" class="weekday">{{ item }}</span>
-      <div v-for="item in dayList"  class="day-container">
-        <div :class="{icon : item.date}" @click="openPost(item)">
+      <div v-for="item in dayList" class="day-container">
+        <div :class="{ icon: item.date }" @click="openPost(item)">
         </div>
-        <span class="date" :class="{ highlight : matchToday(item)}">
+        <span class="date" :class="{ highlight: matchToday(item) }">
           {{ item.date }}
         </span>
       </div>
     </div>
-    <van-popup
-      v-model:show="show"
-      position="bottom"
-      :style="{ height: '35%' }"
-      round
-    >
-      <van-date-picker
-        v-if="true"
-        v-model="currentDate"
-        title="選擇年月"
-        :min-date="minDate"
-        :max-date="maxDate"
-        :columns-type="columnType"
-        visible-option-num="4"
-        @confirm="handleConfirm()"
-        @cancel="handleCancel()"
-      >
+    <van-popup v-model:show="show" position="bottom" :style="{ height: '35%' }" round>
+      <van-date-picker v-if="true" v-model="currentDate" title="選擇年月" :min-date="minDate" :max-date="maxDate"
+        :columns-type="columnType" visible-option-num="4" @confirm="handleConfirm()" @cancel="handleCancel()">
         <template #confirm>
           確認
         </template>
@@ -197,7 +185,7 @@ const userSignOut = () => {
 
 .calendar-container {
   width: 100%;
-  height:100vh;
+  height: 100vh;
 }
 
 .icon {
@@ -228,7 +216,7 @@ const userSignOut = () => {
 }
 
 .selectBar {
-  width:40%;
+  width: 40%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -242,5 +230,4 @@ const userSignOut = () => {
   padding: 0 0.35rem;
   border-radius: 1rem;
 }
-
 </style>

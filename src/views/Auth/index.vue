@@ -31,6 +31,7 @@ const onSignIn = async () => {
     router.push({
       name: 'home'
     })
+    showSuccessToast('登入成功！');
     resetInfo()
   } else {
     console.log('密碼錯誤 ')
@@ -45,6 +46,7 @@ const loginWithGoogle = async () => {
     router.push({
       name: 'home'
     })
+    showSuccessToast('登入成功！');
   } else {
     //沒有登入成功
     console.log('沒有登入成功')

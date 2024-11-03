@@ -77,7 +77,6 @@ export const logOutAPI = async () => {
   try{
     const auth = getAuth();
     await signOut(auth)
-    console.log('登出成功')
   }catch(e){
     console.log('登出失敗')
   }

@@ -44,8 +44,7 @@ router.beforeEach( (to, from) => {
   const auth =  getAuth()
   if(to.matched.some(record => record.meta.requiresAuth)){
       if (!userStore.user) {
-        console.log(userStore.user)
-        console.log('沒登入')
+        showToast('請先登入')
         return {path: '/auth/login'}
       }
   }

@@ -20,6 +20,13 @@ const onRegister = async () => {
   const result = await authRegisterAPI(userEmail.value, password.value)
   if (result == '註冊成功') {
     showSuccessToast('註冊成功！');
+  } else if (result == '已註冊過') {
+    showToast('該帳號已註冊過')
+  } else {
+    showFailToast('註冊失敗')
+    resetInfo()
+    registerForm.resetValidation()
+    return
   }
   resetInfo()
   router.push({

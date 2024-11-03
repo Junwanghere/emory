@@ -14,14 +14,11 @@ export const authRegisterAPI = async (email, password) => {
     const errorCode = error.code;
     switch (errorCode) {
       case 'auth/email-already-in-use':
-        console.log('已註冊過')
-        // 應該直接跳轉到登入頁面
-        break;
+        return '已註冊過'
       case 'auth/invalid-email':
-        console.log('不是有效的email')   
-        break;   
+        return '不是有效的email'
       default:
-        console.log(errorMessage)  
+        return errorMessage  
     }
     // console.log(errorCode, errorMessage)
   }

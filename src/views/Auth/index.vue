@@ -1,5 +1,5 @@
 <script setup name="Login">
-import {  ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { authRegisterAPI, authLoginAPI, signInWithGoogleAPI, signInWithPopupAPI } from '@/apis/auth.js'
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
@@ -26,24 +26,30 @@ const onRegister = async () => {
 
 const onSignIn = async () => {
   const res = await authLoginAPI(userEmail.value, password.value)
-  if(res){
+  if (res) {
     userStore.setUser(res)
     router.push({
       name: 'home'
     })
     resetInfo()
-  }else{
+  } else {
     console.log('密碼錯誤 ')
   }
 }
 
 
-const loginWithGoogle = () => {
-  const res = signInWithPopupAPI()
-  userStore.setUser(res)
-  router.push({
-    name: 'auth'
-  })
+const loginWithGoogle = async () => {
+  const res = await signInWithPopupAPI()
+  if (res) {
+    userStore.setUser(res)
+    router.push({
+      name: 'home'
+    })
+  } else {
+    //沒有登入成功
+    console.log('沒有登入成功')
+  }
+
 }
 
 
@@ -79,7 +85,7 @@ const passwordRule = [
   {
     validator(value) {
       return value.length >= 8
-    }, message: '密碼最少需為8位', trigger: ['onChange','onBlur']
+    }, message: '密碼最少需為8位', trigger: ['onChange', 'onBlur']
   }
 ]
 
@@ -96,7 +102,7 @@ watch(() => {
   return route.params.mode
 }, () => {
   displayMode.value = route.params.mode
-},{immediate: true} )
+}, { immediate: true })
 
 </script>
 <template>
@@ -104,20 +110,9 @@ watch(() => {
 
   <van-form ref="loginForm" v-if="displayMode == 'login'" @submit="onSignIn">
     <van-cell-group inset>
-      <van-field 
-        v-model="userEmail" 
-        name="Email" 
-        label="Email" 
-        placeholder="請輸入email" 
-        :rules="useremailRule" 
-      />
-      <van-field 
-        v-model="password" 
-        type="password" 
-        name="password" 
-        label="密碼" 
-        placeholder="密碼"
-        :rules="[{ required: true, message:'密碼不得為空', trigger: 'onBlur' }]" />
+      <van-field v-model="userEmail" name="Email" label="Email" placeholder="請輸入email" :rules="useremailRule" />
+      <van-field v-model="password" type="password" name="password" label="密碼" placeholder="密碼"
+        :rules="[{ required: true, message: '密碼不得為空', trigger: 'onBlur' }]" />
     </van-cell-group>
     <div class="link-container">
       <a href="#" @click="toggleMode">立即註冊</a>
@@ -134,35 +129,12 @@ watch(() => {
     </div>
   </van-form>
 
-  <van-form 
-    ref="registerForm" 
-    :show-error-message="true"
-    v-else @submit="onRegister"
-  >
+  <van-form ref="registerForm" :show-error-message="true" v-else @submit="onRegister">
     <van-cell-group inset>
-      <van-field 
-        v-model="userEmail" 
-        name="Email" 
-        label="Email" 
-        placeholder="請輸入email" 
-        :rules="useremailRule" 
-      />
-      <van-field 
-        v-model="password" 
-        type="password" 
-        name="密碼" 
-        label="密碼" 
-        placeholder="密碼" 
-        :rules="passwordRule" 
-      />
-      <van-field 
-        v-model="confirmPassword" 
-        type="password" 
-        name="確認密碼" 
-        label="確認密碼" 
-        placeholder="密碼"
-        :rules="confirmPasswordRule" 
-        />
+      <van-field v-model="userEmail" name="Email" label="Email" placeholder="請輸入email" :rules="useremailRule" />
+      <van-field v-model="password" type="password" name="密碼" label="密碼" placeholder="密碼" :rules="passwordRule" />
+      <van-field v-model="confirmPassword" type="password" name="確認密碼" label="確認密碼" placeholder="密碼"
+        :rules="confirmPasswordRule" />
 
     </van-cell-group>
     <a href="#" @click="toggleMode">去登入</a>
@@ -176,7 +148,6 @@ watch(() => {
 </template>
 
 <style scoped>
-
 .welcome-sec {
   width: 100%;
   aspect-ratio: 1 / 0.9;

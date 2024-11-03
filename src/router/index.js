@@ -40,9 +40,12 @@ const router = createRouter({
 
 
 router.beforeEach( (to, from) => {
+  const userStore = useUserStore()
   const auth =  getAuth()
   if(to.matched.some(record => record.meta.requiresAuth)){
-      if (!auth.currentUser) {
+      if (!userStore.user) {
+        console.log(userStore.user)
+        console.log('沒登入')
         return {path: '/auth/login'}
       }
   }

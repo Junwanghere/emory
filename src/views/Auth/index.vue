@@ -44,7 +44,7 @@ const onSignIn = async () => {
     showSuccessToast('登入成功！');
     resetInfo()
   } else {
-    console.log('密碼錯誤 ')
+    console.log('密碼錯誤/發生錯誤 ')
   }
 }
 
@@ -135,8 +135,8 @@ watch(() => {
       <van-button round block type="primary" native-type="submit">
         提交
       </van-button>
-      <van-button icon="public/official-Google-Logo-PNG-Image.png" @click="loginWithGoogle" style="margin-top: 5px;"
-        round block>
+      <van-button icon="/official-Google-Logo-PNG-Image.png" @click="loginWithGoogle" style="margin-top: 5px;" round
+        block>
         用Google開始
       </van-button>
     </div>

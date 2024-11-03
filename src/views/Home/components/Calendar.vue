@@ -101,9 +101,7 @@ const userSignOut = () => {
       router.push({
         path: '/auth',
       })
-    })
-    .catch(() => {
-    });
+    }).catch(e => { })
 }
 
 </script>
@@ -136,7 +134,7 @@ const userSignOut = () => {
     </div>
     <van-popup v-model:show="show" position="bottom" :style="{ height: '35%' }" round>
       <van-date-picker v-if="true" v-model="currentDate" title="選擇年月" :min-date="minDate" :max-date="maxDate"
-        :columns-type="columnType" visible-option-num="4" @confirm="handleConfirm()" @cancel="handleCancel()">
+        :columns-type="columnType" visible-option-num="4" @confirm="handleConfirm" @cancel="handleCancel()">
         <template #confirm>
           確認
         </template>

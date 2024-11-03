@@ -74,12 +74,11 @@ const imagePreview = ref('')
 
 const postDiary = async () => {
   // 進行一次資料校驗以避免重複請求
-  const date = `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
   if (compareData.imgUrl == imagePreview.value && compareData.postContent == dailyContent.value) {
     return
   } else {
     const uid = userStore.user.uid
-    await postNewPostAPI(uid, date, imagePreview.value, dailyContent.value)
+    await postNewPostAPI(uid, userSelectDate.value, imagePreview.value, dailyContent.value)
   }
 }
 
@@ -233,7 +232,9 @@ const onSelect = async (item) => {
   margin: 0 auto;
   margin-top: 3.5rem;
   aspect-ratio: 1 / 1;
-  border: 1px solid black
+  border-radius: 2rem;
+  overflow: hidden;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
 }
 
 .input-field {
@@ -245,6 +246,7 @@ const onSelect = async (item) => {
 .field-container {
   width: 90%;
   margin: 0 auto;
+  margin-top: 0.2rem;
 }
 
 .van-image {

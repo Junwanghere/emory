@@ -9,7 +9,7 @@ export const authRegisterAPI = async (email, password) => {
     const auth = getAuth();
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const user = userCredential.user  
-    return user
+    return '註冊成功'
   }catch(error){
     const errorCode = error.code;
     switch (errorCode) {

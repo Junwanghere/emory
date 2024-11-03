@@ -17,10 +17,13 @@ const registerForm = ref(null)
 const loginForm = ref(null)
 
 const onRegister = async () => {
-  await authRegisterAPI(userEmail.value, password.value)
+  const result = await authRegisterAPI(userEmail.value, password.value)
+  if (result == '註冊成功') {
+    showSuccessToast('註冊成功！');
+  }
   resetInfo()
   router.push({
-    path: '/auth'
+    path: '/auth/login'
   })
 }
 
@@ -78,6 +81,7 @@ const toggleMode = () => {
 }
 
 const useremailRule = [
+  { required: true, message: '請填寫email', trigger: 'onBlur' },
   { pattern: /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/, message: '不是有效的email', trigger: 'onChange' }
 ]
 

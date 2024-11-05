@@ -53,9 +53,7 @@ const getDiaryData = async () => {
   }
 }
 
-const activeEmotion = computed((emotion) => {
-  return emotion == diaryEmotion.value
-})
+
 
 onMounted(async () => {
   const { date, day } = route.query
@@ -103,8 +101,12 @@ const delDiary = async () => {
     return
   }
   const uid = userStore.user.uid
+  // 有內容才刪
+  if(diaryContent.value || diaryEmotion.value )
   await postDelDiaryAPI(uid, userSelectDate.value)
-  await postDelImgAPI(uid, userSelectDate.value)
+  if(diaryImg.value){
+    await postDelImgAPI(uid, userSelectDate.value)
+  }
   resetDiary()
 }
 
@@ -158,12 +160,11 @@ const onSelect = async (item) => {
 }
 
 const emotionsData= [
-  
-  {emotion: 'VeryHappy', alt: "VerryHappyIcon", imgUrl: '/src/assets/emotions/veryhappy.png'},
-  {emotion: 'Happy', alt: "HappyIcon", imgUrl: '/src/assets/emotions/happy.png'},
-  {emotion: 'Neutral', alt: "NeutralIcon", imgUrl: '/src/assets/emotions/neutral.png'},
-  {emotion: 'Sad', alt: "SadIcon", imgUrl: '/src/assets/emotions/sad.png'},
-  {emotion: 'VerySad', alt: "VerySadIcon", imgUrl: '/src/assets/emotions/verysad.png'}
+  {emotion: 'VeryHappy', alt: "VerryHappyIcon", activeImgUrl: '/src/assets/emotions/veryhappy.png', notActiveImgUrl: '/src/assets/emotions/notchosenveryhappy.png'},
+  {emotion: 'Happy', alt: "HappyIcon", activeImgUrl: '/src/assets/emotions/happy.png', notActiveImgUrl: '/src/assets/emotions/notchosenhappy.png'},
+  {emotion: 'Neutral', alt: "NeutralIcon", activeImgUrl: '/src/assets/emotions/neutral.png', notActiveImgUrl: '/src/assets/emotions/notchosenneutral.png'},
+  {emotion: 'Sad', alt: "SadIcon", activeImgUrl: '/src/assets/emotions/sad.png', notActiveImgUrl: '/src/assets/emotions/notchosensad.png'},
+  {emotion: 'VerySad', alt: "VerySadIcon", activeImgUrl: '/src/assets/emotions/verysad.png', notActiveImgUrl: '/src/assets/emotions/notchosenverysad.png'}
 ]
 
 const setEmotion = (emotion) => {
@@ -194,7 +195,8 @@ const setEmotion = (emotion) => {
       <p class="emotion-sec-text">今天過得怎麼樣？</p>
       <div class="emotion-container" >
         <div @click="setEmotion(emotion.emotion)" class="emotion-img-container" v-for="emotion in emotionsData">
-          <img class="emotion-img" :src="emotion.imgUrl" alt="emotion.alt">
+          <img  v-if="diaryEmotion != emotion.emotion" class="emotion-img" :src="!diaryEmotion ? emotion.activeImgUrl : emotion.notActiveImgUrl" alt="emotion.alt">
+          <img  v-else class="emotion-img" :src="emotion.activeImgUrl" alt="emotion.alt">
         </div>
       </div>
     </div>
@@ -239,7 +241,6 @@ const setEmotion = (emotion) => {
   right: 5%;
   top: 3%;
 }
-
 
 
 .ellipsis-btn {

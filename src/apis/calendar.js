@@ -12,10 +12,11 @@ export const calendarGetEmotionsAPI = async (uid, year, month) => {
       return null
     }else {
       // 一天只會有一筆日記，這裡面會是一個陣列
+      const data = []
       querySnapshot.forEach((doc) => {
-        console.log(doc.id, doc.data())
+        data.push(doc.data())
       })
-      return querySnapshot.docs
+      return data
     }
   } catch(e) {
     // 尚未處理提示獲取資料出錯的情況

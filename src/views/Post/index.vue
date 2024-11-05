@@ -162,11 +162,11 @@ const onSelect = async (item) => {
 }
 
 const emotionsData= [
-  {emotion: 'VeryHappy', alt: "VerryHappyIcon", activeImgUrl: '/src/assets/emotions/veryhappy.png', notActiveImgUrl: '/src/assets/emotions/notchosenveryhappy.png'},
-  {emotion: 'Happy', alt: "HappyIcon", activeImgUrl: '/src/assets/emotions/happy.png', notActiveImgUrl: '/src/assets/emotions/notchosenhappy.png'},
-  {emotion: 'Neutral', alt: "NeutralIcon", activeImgUrl: '/src/assets/emotions/neutral.png', notActiveImgUrl: '/src/assets/emotions/notchosenneutral.png'},
-  {emotion: 'Sad', alt: "SadIcon", activeImgUrl: '/src/assets/emotions/sad.png', notActiveImgUrl: '/src/assets/emotions/notchosensad.png'},
-  {emotion: 'VerySad', alt: "VerySadIcon", activeImgUrl: '/src/assets/emotions/verysad.png', notActiveImgUrl: '/src/assets/emotions/notchosenverysad.png'}
+  {emotion: 'veryhappy', alt: "VerryHappyIcon", activeImgUrl: '/src/assets/emotions/veryhappy.png', notActiveImgUrl: '/src/assets/emotions/notchosenveryhappy.png'},
+  {emotion: 'happy', alt: "HappyIcon", activeImgUrl: '/src/assets/emotions/happy.png', notActiveImgUrl: '/src/assets/emotions/notchosenhappy.png'},
+  {emotion: 'neutral', alt: "NeutralIcon", activeImgUrl: '/src/assets/emotions/neutral.png', notActiveImgUrl: '/src/assets/emotions/notchosenneutral.png'},
+  {emotion: 'sad', alt: "SadIcon", activeImgUrl: '/src/assets/emotions/sad.png', notActiveImgUrl: '/src/assets/emotions/notchosensad.png'},
+  {emotion: 'verysad', alt: "VerySadIcon", activeImgUrl: '/src/assets/emotions/verysad.png', notActiveImgUrl: '/src/assets/emotions/notchosenverysad.png'}
 ]
 
 const setEmotion = (emotion) => {

@@ -15,7 +15,7 @@ const userStore = useUserStore()
 const userSelectDate = computed(() => {
   return `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
 })
-
+const userSelectEmotion = ref(null)
 
 const resetDiary = () => {
   imagePreview.value = ''
@@ -148,6 +148,20 @@ const onSelect = async (item) => {
   }
 }
 
+const emotionsData= [
+  
+  {emotion: 'VeryHappy', alt: "VerryHappyIcon", imgUrl: '/src/assets/emotions/veryhappy.png'},
+  {emotion: 'Happy', alt: "HappyIcon", imgUrl: '/src/assets/emotions/happy.png'},
+  {emotion: 'Neutral', alt: "NeutralIcon", imgUrl: '/src/assets/emotions/neutral.png'},
+  {emotion: 'Sad', alt: "SadIcon", imgUrl: '/src/assets/emotions/sad.png'},
+  {emotion: 'VerySad', alt: "VerySadIcon", imgUrl: '/src/assets/emotions/verysad.png'}
+]
+
+const setEmotion = (emotion) => {
+  userSelectEmotion.value = emotion
+  console.log(userSelectEmotion.value )
+}
+
 </script>
 
 <template>
@@ -167,7 +181,14 @@ const onSelect = async (item) => {
         </template>
       </van-image>
     </div>
-
+    <div class="emotion-section">
+      <p class="emotion-sec-text">今天過得怎麼樣？</p>
+      <div class="emotion-container">
+        <div @click="setEmotion(emotion.emotion)" class="emotion-img-container" v-for="emotion in emotionsData">
+          <img class="emotion-img" :src="emotion.imgUrl" alt="emotion.alt">
+        </div>
+      </div>
+    </div>
     <van-cell-group inset class="field-container">
       <van-field class="input-field" v-model="dailyContent" rows="2" autosize
         :label="`${selectedYear}年${selectedMonth}月${selectedDate}日${selectedDay}`" type="textarea"
@@ -251,5 +272,50 @@ const onSelect = async (item) => {
 
 .van-image {
   vertical-align: bottom;
+}
+
+.emotion-section {
+  width: 90%;
+  aspect-ratio: 4 / 1;
+  background-color: white;
+  margin: 0 auto;
+  margin-top: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.emotion-sec-text {
+  font-size: 0.8rem;
+  padding-bottom: 0.4rem;
+}
+
+.emotion-container {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.emotion-img-container {
+  width: 15%;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.emotion-img-container:active {
+  transform: scale(120%);
+  transition: transform 0.15s;
+}
+
+.van-cell-group {
+  margin-top: 1.5rem;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 1rem;
+  padding: 0 2rem;
+  min-height: 15rem;
 }
 </style>

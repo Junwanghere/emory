@@ -37,7 +37,6 @@ const onRegister = async () => {
 const onSignIn = async () => {
   const res = await authLoginAPI(userEmail.value, password.value)
   if (res) {
-    userStore.setUser(res)
     router.push({
       name: 'home'
     })

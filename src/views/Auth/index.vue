@@ -51,7 +51,6 @@ const onSignIn = async () => {
 const loginWithGoogle = async () => {
   const res = await signInWithPopupAPI()
   if (res) {
-    userStore.setUser(res)
     resetInfo()
     router.push({
       name: 'home'

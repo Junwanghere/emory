@@ -4,14 +4,15 @@ import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "f
 
 //在做這些操作之前都應該檢查一下使用者目前是否有登入
 
-export const postNewPostAPI = async (uid, date, imgUrl, postContent) => {
+export const postNewPostAPI = async (uid, date, imgUrl, postContent, emotion) => {
   try {
     const diaryRef = doc(db, `${uid}`, `${date}`)
     await setDoc(diaryRef, 
     {  
       date,
       imgUrl,
-      postContent
+      postContent,
+      emotion
     }, 
     { merge: true})
   } catch (e) {
@@ -72,3 +73,4 @@ export const postDelDiaryAPI = async (uid, date) => {
     console.log(e)
   }
 }
+

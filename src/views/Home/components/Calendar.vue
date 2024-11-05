@@ -1,12 +1,18 @@
 <script setup name="Calendar">
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronDownIcon, PlayIcon } from '@heroicons/vue/20/solid'
-import { computed, reactive, ref, toRefs, watch } from 'vue'
+import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import { useDateStore } from '@/stores/date';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { logOutAPI } from '@/apis/auth';
+import { calendarGetEmotionsAPI } from '@/apis/calendar';
+
+const testData = ref([])
+onMounted(async () => {
+  testData.value = await calendarGetEmotionsAPI(userStore.user.uid)
+})
 
 
 const userStore = useUserStore()

@@ -15,24 +15,27 @@ const userStore = useUserStore()
 const userSelectDate = computed(() => {
   return `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
 })
-const userSelectEmotion = ref(null)
+const diaryEmotion = ref(null)
 
 const resetDiary = () => {
-  imagePreview.value = ''
-  dailyContent.value = ''
+  diaryImg.value = ''
+  diaryContent.value = ''
+  diaryEmotion.value = ''
 }
 
 let compareData = reactive({
   date: '',
   imgUrl: '',
-  postContent: ''
+  postContent: '',
+  emotion: ''
 })
 
 const resetCompareData = () => {
   const emptyData = {
     date: '',
     imgUrl: '',
-    postContent: ''
+    postContent: '',
+    emotion: ''
   }
   Object.assign(compareData, emptyData)
 }
@@ -44,10 +47,15 @@ const getDiaryData = async () => {
   const response = await postGetDiaryAPI(uid, userSelectDate.value)
   if (response) {
     Object.assign(compareData, response)
-    imagePreview.value = response.imgUrl
-    dailyContent.value = response.postContent
+    diaryImg.value = response.imgUrl
+    diaryContent.value = response.postContent
+    diaryEmotion.value = response.emotion
   }
 }
+
+const activeEmotion = computed((emotion) => {
+  return emotion == diaryEmotion.value
+})
 
 onMounted(async () => {
   const { date, day } = route.query
@@ -58,7 +66,7 @@ onMounted(async () => {
 
 
 
-const dailyContent = ref('')
+const diaryContent = ref('')
 // 用戶上傳照片
 const afterRead = async (file) => {
   const toast = showLoadingToast({
@@ -66,19 +74,19 @@ const afterRead = async (file) => {
     forbidClick: true,
     loadingType: 'spinner',
   });
-  imagePreview.value = await postUploadImgAPI(file, userStore.user.uid, userSelectDate.value)
+  diaryImg.value = await postUploadImgAPI(file, userStore.user.uid, userSelectDate.value)
   toast.close()
 }
 
-const imagePreview = ref('')
+const diaryImg = ref('')
 
 const postDiary = async () => {
   // 進行一次資料校驗以避免重複請求
-  if (compareData.imgUrl == imagePreview.value && compareData.postContent == dailyContent.value) {
+  if (compareData.imgUrl == diaryImg.value && compareData.postContent == diaryContent.value && compareData.emotion == diaryEmotion.value) {
     return
   } else {
     const uid = userStore.user.uid
-    await postNewPostAPI(uid, userSelectDate.value, imagePreview.value, dailyContent.value)
+    await postNewPostAPI(uid, userSelectDate.value, diaryImg.value, diaryContent.value, diaryEmotion.value)
   }
 }
 
@@ -90,7 +98,8 @@ const closePopup = async () => {
 }
 
 const delDiary = async () => {
-  if (!dailyContent.value && !imagePreview.value) {
+  // 如果都是空的話就不做刪除動作
+  if (!diaryContent.value && !diaryImg.value && !diaryEmotion.value) {
     return
   }
   const uid = userStore.user.uid
@@ -158,14 +167,14 @@ const emotionsData= [
 ]
 
 const setEmotion = (emotion) => {
-  userSelectEmotion.value = emotion
-  console.log(userSelectEmotion.value )
+  diaryEmotion.value = emotion
+  console.log(diaryEmotion.value )
 }
 
 </script>
 
 <template>
-  <div>
+  <div class="section">
     <div class="btn-container">
       <div class="ellipsis-btn" @click="showOptions">
         <van-icon size="1.2rem" name="ellipsis" color="#000000" />
@@ -175,7 +184,7 @@ const setEmotion = (emotion) => {
       </div>
     </div>
     <div class="img-container">
-      <van-image width="100%" fit="cover" height="100%" :src="imagePreview" v-if="imagePreview">
+      <van-image width="100%" fit="cover" height="100%" :src="diaryImg" v-if="diaryImg">
         <template v-slot:loading>
           <van-loading type="spinner" size="20" />
         </template>
@@ -183,14 +192,14 @@ const setEmotion = (emotion) => {
     </div>
     <div class="emotion-section">
       <p class="emotion-sec-text">今天過得怎麼樣？</p>
-      <div class="emotion-container">
+      <div class="emotion-container" >
         <div @click="setEmotion(emotion.emotion)" class="emotion-img-container" v-for="emotion in emotionsData">
           <img class="emotion-img" :src="emotion.imgUrl" alt="emotion.alt">
         </div>
       </div>
     </div>
     <van-cell-group inset class="field-container">
-      <van-field class="input-field" v-model="dailyContent" rows="2" autosize
+      <van-field class="input-field" v-model="diaryContent" rows="2" autosize
         :label="`${selectedYear}年${selectedMonth}月${selectedDate}日${selectedDay}`" type="textarea"
         placeholder="今天過得如何呢？" label-align="top" size="large" />
     </van-cell-group>
@@ -211,6 +220,10 @@ const setEmotion = (emotion) => {
 </template>
 
 <style scoped>
+.section {
+  margin-bottom: 53px;
+}
+
 .image-preview {
   width: 100%;
   height: 100%;
@@ -226,6 +239,8 @@ const setEmotion = (emotion) => {
   right: 5%;
   top: 3%;
 }
+
+
 
 .ellipsis-btn {
   background-color: #e0e0e0;
@@ -253,7 +268,7 @@ const setEmotion = (emotion) => {
   margin: 0 auto;
   margin-top: 3.5rem;
   aspect-ratio: 1 / 1;
-  border-radius: 2rem;
+  border-radius: 1rem;
   overflow: hidden;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
 }
@@ -279,7 +294,7 @@ const setEmotion = (emotion) => {
   aspect-ratio: 4 / 1;
   background-color: white;
   margin: 0 auto;
-  margin-top: 1.5rem;
+  margin-top: 1.3rem;
   border-radius: 1rem;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -304,7 +319,10 @@ const setEmotion = (emotion) => {
   aspect-ratio: 1 / 1;
   cursor: pointer;
   transition: transform 0.15s;
+  position: relative;
 }
+
+
 
 .emotion-img-container:active {
   transform: scale(120%);
@@ -312,10 +330,10 @@ const setEmotion = (emotion) => {
 }
 
 .van-cell-group {
-  margin-top: 1.5rem;
+  margin-top: 1.3rem;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
   border-radius: 1rem;
   padding: 0 2rem;
-  min-height: 15rem;
+  min-height: 12rem;
 }
 </style>

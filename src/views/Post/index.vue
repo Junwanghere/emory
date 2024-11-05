@@ -44,7 +44,8 @@ const getDiaryData = async () => {
   resetCompareData()
 
   const uid = userStore.user.uid
-  const response = await postGetDiaryAPI(uid, userSelectDate.value)
+  const period = `${selectedYear.value}年${selectedMonth.value}月`
+  const response = await postGetDiaryAPI(uid, userSelectDate.value, period)
   if (response) {
     Object.assign(compareData, response)
     diaryImg.value = response.imgUrl
@@ -84,7 +85,8 @@ const postDiary = async () => {
     return
   } else {
     const uid = userStore.user.uid
-    await postNewPostAPI(uid, userSelectDate.value, diaryImg.value, diaryContent.value, diaryEmotion.value)
+    const period = `${selectedYear.value}年${selectedMonth.value}月`
+    await postNewPostAPI(uid, userSelectDate.value, diaryImg.value, diaryContent.value, diaryEmotion.value, period)
   }
 }
 

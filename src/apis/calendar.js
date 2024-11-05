@@ -4,17 +4,17 @@ import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "f
 
 export const calendarGetEmotionsAPI = async (uid, year, month) => {
   try{
-    const diaryRef = collection(db, `${uid}`)
-    const start = `${year}年${month}月`
-    const end = `${year}年${month + 1}月`
-    const q = query(diaryRef, where('date', '>=', '2024年11月'), where('date', '<', '2024年12月'))
-    const querySnapshot = await getDocs(q);
-    console.log(querySnapshot)
+    const period = `${year}年${month}月`
+    const diaryRef = collection(db, `${uid}`, 'diary', `${period}`)
+    const querySnapshot = await getDocs(diaryRef);
     // 原本無資料會得到空陣列，透過傳null讓前端好做邏輯判斷
     if(querySnapshot.empty){
       return null
     }else {
       // 一天只會有一筆日記，這裡面會是一個陣列
+      querySnapshot.forEach((doc) => {
+        console.log(doc.id, doc.data())
+      })
       return querySnapshot.docs
     }
   } catch(e) {

@@ -4,9 +4,9 @@ import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "f
 
 //在做這些操作之前都應該檢查一下使用者目前是否有登入
 
-export const postNewPostAPI = async (uid, date, imgUrl, postContent, emotion) => {
+export const postNewPostAPI = async (uid, date, imgUrl, postContent, emotion, period) => {
   try {
-    const diaryRef = doc(db, `${uid}`, `${date}`)
+    const diaryRef = doc(db,`${uid}`,'diary', `${period}`,`${date}`)
     await setDoc(diaryRef, 
     {  
       date,
@@ -46,9 +46,9 @@ export const postDelImgAPI = async (uid, date) => {
   }
 }
 
-export const postGetDiaryAPI = async (uid, date) => {
+export const postGetDiaryAPI = async (uid, date, period) => {
   try{
-    const diaryRef = collection(db, `${uid}`)
+    const diaryRef = collection(db, `${uid}/diary/${period}`)
     const q = query(diaryRef, where('date', '==', `${date}`))
     const querySnapshot = await getDocs(q);
     // 原本無資料會得到空陣列，透過傳null讓前端好做邏輯判斷

@@ -4,14 +4,15 @@ import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import { useDateStore } from '@/stores/date';
-import { useRoute, useRouter } from 'vue-router';
+import {  useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { logOutAPI } from '@/apis/auth';
 import { calendarGetEmotionsAPI } from '@/apis/calendar';
 
 const testData = ref([])
 onMounted(async () => {
-  testData.value = await calendarGetEmotionsAPI(userStore.user.uid)
+  testData.value = await calendarGetEmotionsAPI(userStore.user.uid, selectedYear.value, selectedMonth.value)
+  console.log()
 })
 
 

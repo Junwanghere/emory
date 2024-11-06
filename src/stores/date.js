@@ -42,11 +42,19 @@ export const useDateStore = defineStore('date',() => {
   const selectYear = (value) => {
     selectedYear.value = value
   }
-
   const selectedYear = ref(yearOfToday.value)
   const selectedMonth = ref(monthOfToday.value)
-  const selectedDate = ref(dateOfToday.value)
-  const selectedDay = ref(dayOfToday.value)
+  const selectedDay = ref(dateOfToday.value)
+  const selectedWeekday = ref(dayOfToday.value)
+  const selectedFullDate = computed(() => {
+    return `${selectedYear.value}年${selectedMonth.value}月${selectedDay.value}日${selectedWeekday.value}`
+  })
+  const setSelectedDate = (year, month, date, day) => {
+    selectedYear.value = year
+    selectedMonth.value = month
+    selectedDay.value = date
+    selectedWeekday.value = day
+  }
 
   return {
     today,
@@ -58,7 +66,9 @@ export const useDateStore = defineStore('date',() => {
     selectYear,
     selectedMonth,
     selectedYear,
-    selectedDate,
-    selectedDay
+    selectedDay,
+    selectedWeekday,
+    selectedFullDate,
+    setSelectedDate
   }
 })

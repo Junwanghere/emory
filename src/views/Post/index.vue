@@ -8,15 +8,15 @@ import { postUploadImgAPI, postNewPostAPI, postGetDiaryAPI, postDelDiaryAPI, pos
 import { useUserStore } from '@/stores/user';
 
 
-const { selectedYear, selectedMonth, selectedDate, selectedDay } = toRefs(useDateStore())
+const { selectedYear, selectedMonth, selectedDay, selectedWeekday } = toRefs(useDateStore())
+const dateStore = useDateStore()
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const userSelectDate = computed(() => {
-  return `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
+  return `${selectedYear.value}年${selectedMonth.value}月${selectedDay.value}日${selectedWeekday.value}`
 })
 const diaryEmotion = ref('')
-
 const resetDiary = () => {
   diaryImg.value = ''
   diaryContent.value = ''
@@ -40,12 +40,12 @@ const resetCompareData = () => {
   Object.assign(compareData, emptyData)
 }
 
-const getDiaryData = async () => {
+const getDiaryData = async (fullDate) => {
   resetCompareData()
 
   const uid = userStore.user.uid
   const period = `${selectedYear.value}年${selectedMonth.value}月`
-  const response = await postGetDiaryAPI(uid, userSelectDate.value, period)
+  const response = await postGetDiaryAPI(uid, fullDate, period)
   if (response) {
     Object.assign(compareData, response)
     diaryImg.value = response.imgUrl
@@ -57,10 +57,8 @@ const getDiaryData = async () => {
 
 
 onMounted(async () => {
-  const { date, day } = route.query
-  selectedDate.value = date
-  selectedDay.value = day
-  await getDiaryData()
+  const { fullDate } = route.query
+  await getDiaryData(fullDate)
 })
 
 
@@ -73,7 +71,7 @@ const afterRead = async (file) => {
     forbidClick: true,
     loadingType: 'spinner',
   });
-  diaryImg.value = await postUploadImgAPI(file, userStore.user.uid, userSelectDate.value)
+  diaryImg.value = await postUploadImgAPI(file, userStore.user.uid, dateStore.selectedFullDate)
   toast.close()
 }
 
@@ -86,7 +84,7 @@ const postDiary = async () => {
   } else {
     const uid = userStore.user.uid
     const period = `${selectedYear.value}年${selectedMonth.value}月`
-    await postNewPostAPI(uid, userSelectDate.value, diaryImg.value, diaryContent.value, diaryEmotion.value, period)
+    await postNewPostAPI(uid, dateStore.selectedFullDate, diaryImg.value, diaryContent.value, diaryEmotion.value, period)
   }
 }
 
@@ -105,9 +103,9 @@ const delDiary = async () => {
   const uid = userStore.user.uid
   // 有內容才刪
   if(diaryContent.value || diaryEmotion.value )
-  await postDelDiaryAPI(uid, userSelectDate.value)
+  await postDelDiaryAPI(uid, dateStore.selectedFullDate)
   if(diaryImg.value){
-    await postDelImgAPI(uid, userSelectDate.value)
+    await postDelImgAPI(uid, dateStore.selectedFullDate)
   }
   resetDiary()
 }
@@ -115,18 +113,18 @@ const delDiary = async () => {
 const changeDay = async (value) => {
   // 點選換天時，改變路由，改使用者選擇日期的數據
   await postDiary()
-  let newDay = dayjs(`${selectedYear.value}-${selectedMonth.value}-${selectedDate.value}`).add(value, 'day').format('YYYY-M-D-dddd')
+  let newDay = dayjs(`${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`).add(value, 'day').format('YYYY-M-D-dddd')
   newDay = newDay.split('-')
   selectedYear.value = +newDay[0]
   selectedMonth.value = +newDay[1]
-  selectedDate.value = +newDay[2]
-  selectedDay.value = newDay[3]
+  selectedDay.value = +newDay[2]
+  selectedWeekday.value = newDay[3]
 
   const data = {
     year: selectedYear.value,
     month: selectedMonth.value,
-    date: selectedDate.value,
-    day: selectedDay.value
+    date: selectedDay.value,
+    day: selectedWeekday.value
   }
 
   router.push({
@@ -135,9 +133,10 @@ const changeDay = async (value) => {
   })
 }
 
-watch(() => route.query.date, async () => {
+watch(() => route.query.fullDate, async () => {
   resetDiary()
-  await getDiaryData()
+  const { fullDate } = route.query
+  await getDiaryData(fullDate)
 })
 
 const showAction = ref(false)
@@ -204,7 +203,7 @@ const setEmotion = (emotion) => {
     </div>
     <van-cell-group inset class="field-container">
       <van-field class="input-field" v-model="diaryContent" rows="2" autosize
-        :label="`${selectedYear}年${selectedMonth}月${selectedDate}日${selectedDay}`" type="textarea"
+        :label="dateStore.selectedFullDate" type="textarea"
         placeholder="今天過得如何呢？" label-align="top" size="large" />
     </van-cell-group>
     <van-tabbar :border="true" :safe-area-inset-bottom="true" :fixed="true">

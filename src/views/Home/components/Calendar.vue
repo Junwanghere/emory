@@ -13,8 +13,9 @@ const monthlyData = ref([])
 
 
 
-const userStore = useUserStore()
 const { selectedYear, setMonth, selectedMonth, yearOfToday, monthOfToday, dateOfToday } = toRefs(useDateStore())
+const userStore = useUserStore()
+const dateStore = useDateStore()
 dayjs.locale('zh-tw');
 const weekday = ['日', '一', '二', '三', '四', '五', '六']
 
@@ -57,7 +58,7 @@ watch([selectedYear, selectedMonth], async() => {
     dayList.value.push({
       year: selectedYear.value,
       month: selectedMonth.value,
-      date: ''
+      day: ''
     })
   }
   for (let i = 1; i < (daysInMonth.value + 1); i++) {
@@ -67,8 +68,8 @@ watch([selectedYear, selectedMonth], async() => {
       fullDate: date,
       year: selectedYear.value,
       month: selectedMonth.value,
-      date: i,
-      day: day
+      day: i,
+      weekDay: day
     })
   }
   await getMonthlyData()
@@ -82,7 +83,8 @@ const matchToday = (item) => {
 
 
 
-
+// 設定daypicker
+const showDatePicker = ref(false);
 const currentDate = ref([`${selectedYear.value}`, `${selectedMonth.value}`])
 const columnType = ['year', 'month']
 const minDate = new Date(1900, 0)
@@ -93,24 +95,26 @@ const maxDate = computed(() => {
 const handleConfirm = () => {
   selectedYear.value = +currentDate.value[0]
   selectedMonth.value = +currentDate.value[1]
-  show.value = false
+  showDatePicker.value = false
 }
 
 const handleCancel = () => {
   show.value = false
 }
 
-const show = ref(false);
+
+
+
 
 const router = useRouter()
-
 const openPost = (item) => {
-  const {date, day} = item
+  // 打開日記頁面前，先設定好使用者選的天再push
+  const { year, month, day, weekDay, fullDate } = item
+  dateStore.setSelectedDate(year, month, day, weekDay)
   router.push({
     name: 'post',
     query: {
-      date,
-      day
+      fullDate
     }
   })
 }
@@ -140,14 +144,14 @@ const userSignOut = () => {
   <div class="calendar-container">
     <div class="header">
       <span @click="userSignOut" class="absolute top-3 right-5">登出</span>
-      <div class="year-section" @click="show = !show">
+      <div class="year-section" @click="showDatePicker = !showDatePicker">
         <span class="year">{{ selectedYear }}</span>
         <PlayIcon class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90" />
       </div>
       <div class="selectBar">
         <ChevronDoubleLeftIcon @click="setMonth(-1)" class="hover:cursor-pointer	 size-7 font-bold">
         </ChevronDoubleLeftIcon>
-        <span class="month" @click="show = true">{{ numberToMonth }}</span>
+        <span class="month" @click="showDatePicker = true">{{ numberToMonth }}</span>
         <ChevronDoubleRightIcon @click="setMonth(1)" class="hover:cursor-pointer size-7 font-bold">
         </ChevronDoubleRightIcon>
       </div>
@@ -155,17 +159,17 @@ const userSignOut = () => {
     <div class="days-container">
       <span v-for="item in weekday" class="weekday">{{ item }}</span>
       <div v-for="item in dayList" class="day-container">
-        <div v-if="!item.date"></div>
+        <div v-if="!item.day"></div>
         <div v-else class="icon " @click="openPost(item)">
           <img v-if="item.emotion" :src="item.emotion" alt="">
           <img v-else src="@/assets/emotions/notchosenneutral.png" alt="">
         </div>
         <span class="date" :class="{ highlight: matchToday(item) }">
-          {{ item.date }}
+          {{ item.day }}
         </span>
       </div>
     </div>
-    <van-popup v-model:show="show" position="bottom" :style="{ height: '35%' }" round>
+    <van-popup v-model:show="showDatePicker" position="bottom" :style="{ height: '35%' }" round>
       <van-date-picker v-if="true" v-model="currentDate" title="選擇年月" :min-date="minDate" :max-date="maxDate"
         :columns-type="columnType" visible-option-num="4" @confirm="handleConfirm" @cancel="handleCancel()">
         <template #confirm>

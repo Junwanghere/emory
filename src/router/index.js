@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, onBeforeRouteLeave } from 'vue-router'
 import Home from '@/views/Home/index.vue'
 import Post from '@/views/Post/index.vue'
 import Auth from '@/views/Auth/index.vue'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getAuth } from 'firebase/auth'
 import { useUserStore } from '@/stores/user'
 
 

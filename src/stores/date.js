@@ -37,7 +37,6 @@ export const useDateStore = defineStore('date',() => {
      if(selectedMonth.value < 1){
       selectedMonth.value = 1
      }
-
   }
 
   const selectYear = (value) => {

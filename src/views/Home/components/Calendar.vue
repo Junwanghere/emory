@@ -105,9 +105,13 @@ const show = ref(false);
 const router = useRouter()
 
 const openPost = (item) => {
+  const {date, day} = item
   router.push({
     name: 'post',
-    query: item
+    query: {
+      date,
+      day
+    }
   })
 }
 

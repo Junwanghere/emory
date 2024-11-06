@@ -15,7 +15,7 @@ const userStore = useUserStore()
 const userSelectDate = computed(() => {
   return `${selectedYear.value}年${selectedMonth.value}月${selectedDate.value}日${selectedDay.value}`
 })
-const diaryEmotion = ref(null)
+const diaryEmotion = ref('')
 
 const resetDiary = () => {
   diaryImg.value = ''

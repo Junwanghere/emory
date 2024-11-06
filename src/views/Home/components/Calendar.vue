@@ -1,6 +1,6 @@
 <script setup name="Calendar">
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronDownIcon, PlayIcon } from '@heroicons/vue/20/solid'
-import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
+import { computed, onMounted, onUpdated, reactive, ref, toRefs, watch } from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import { useDateStore } from '@/stores/date';
@@ -28,29 +28,33 @@ const numberToMonth = computed(() => {
   return dayjs(`${selectedMonth.value}`, 'M').format('MMMM')
 })
 
+// 獲取該月資料並且渲染dayList
 const getMonthlyData = async() => {
   const uid = userStore.user.uid
   monthlyData.value = await calendarGetEmotionsAPI(uid, selectedYear.value, selectedMonth.value)
+  monthlyData.value.forEach((item) => {
+    const matchDay = dayList.value.find((day) => {
+      return item.date == day.fullDate
+    })
+    matchDay.emotion = `/src/assets/emotions/${item.emotion}.png`
+  })
 }
+
+
+
 
 onMounted(async() => {
   await getMonthlyData()
-  monthlyData.value.forEach((item) => {
-    const matchDay = dayList.find((day) => {
-      return item.date == day.fullDate
-    })
-    matchDay.emotion = `@/assets/emotions/${item.emotion}.png`
-  })
 })
 
 
 // 根據該年該月生成日立
-let dayList = []
-watch([selectedYear, selectedMonth], () => {
+let dayList = ref([])
+watch([selectedYear, selectedMonth], async() => {
   const firstDayOfMonth = dayjs(`${selectedYear.value}-${selectedMonth.value}`).format('d')
-  dayList = []
+  dayList.value = []
   for (let i = 0; i < firstDayOfMonth; i++) {
-    dayList.push({
+    dayList.value.push({
       year: selectedYear.value,
       month: selectedMonth.value,
       date: ''
@@ -59,15 +63,15 @@ watch([selectedYear, selectedMonth], () => {
   for (let i = 1; i < (daysInMonth.value + 1); i++) {
     const day = dayjs(`${selectedYear.value}-${selectedMonth.value}-${i}`).format('dddd')
     const date = `${selectedYear.value}年${selectedMonth.value}月${i}日${day}`
-    dayList.push({
+    dayList.value.push({
       fullDate: date,
       year: selectedYear.value,
       month: selectedMonth.value,
       date: i,
       day: day
     })
-    
   }
+  await getMonthlyData()
 }, { immediate: true })
 
 const matchToday = (item) => {
@@ -147,9 +151,10 @@ const userSignOut = () => {
     <div class="days-container">
       <span v-for="item in weekday" class="weekday">{{ item }}</span>
       <div v-for="item in dayList" class="day-container">
-        <div :class="{ icon: item.date }" @click="openPost(item)">
-          <img v-if="item.date && !item.emotion" src="@/assets/emotions/notchosenneutral.png" alt="">
-          <img v-else-if="item.date && item.emotion" src="@/assets/emotions/happy.png" alt="">
+        <div v-if="!item.date"></div>
+        <div v-else class="icon " @click="openPost(item)">
+          <img v-if="item.emotion" :src="item.emotion" alt="">
+          <img v-else src="@/assets/emotions/notchosenneutral.png" alt="">
         </div>
         <span class="date" :class="{ highlight: matchToday(item) }">
           {{ item.date }}
@@ -193,6 +198,7 @@ const userSignOut = () => {
   height: 90%;
   align-items: center;
 }
+
 
 .day-container {
   width: 100%;

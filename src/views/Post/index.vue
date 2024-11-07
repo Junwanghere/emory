@@ -81,6 +81,8 @@ const postDiary = async () => {
   // 進行一次資料校驗以避免重複請求
   if (compareData.imgUrl == diaryImg.value && compareData.postContent == diaryContent.value && compareData.emotion == diaryEmotion.value) {
     return
+  }else if(!diaryContent.value && !diaryEmotion.value && !diaryImg.value){
+    return
   } else {
     const uid = userStore.user.uid
     const period = `${selectedYear.value}年${selectedMonth.value}月`
@@ -102,8 +104,11 @@ const delDiary = async () => {
   }
   const uid = userStore.user.uid
   // 有內容才刪
-  if(diaryContent.value || diaryEmotion.value )
-  await postDelDiaryAPI(uid, dateStore.selectedFullDate)
+  if(diaryContent.value || diaryEmotion.value ){
+    const period = `${selectedYear.value}年${selectedMonth.value}月`
+    await postDelDiaryAPI(uid, dateStore.selectedFullDate, period)
+    // 刪除成功提示
+  }
   if(diaryImg.value){
     await postDelImgAPI(uid, dateStore.selectedFullDate)
   }

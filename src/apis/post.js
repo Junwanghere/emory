@@ -64,8 +64,8 @@ export const postGetDiaryAPI = async (uid, date, period) => {
   }
 }
 
-export const postDelDiaryAPI = async (uid, date) => {
-  const diaryRef = doc(db, `${uid}`, `${date}`)
+export const postDelDiaryAPI = async (uid, date, period) => {
+  const diaryRef = doc(db, `${uid}/diary/${period}/${date}`)
   try{
     await deleteDoc(diaryRef)
   }catch(e){

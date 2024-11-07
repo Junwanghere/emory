@@ -37,7 +37,9 @@ const getMonthlyData = async() => {
     const matchDay = dayList.value.find((day) => {
       return item.date == day.fullDate
     })
-    matchDay.emotion = `/src/assets/emotions/${item.emotion}.png`
+    if(item.emotion){
+      matchDay.emotion = `/src/assets/emotions/${item.emotion}.png`
+    }
   })
 }
 

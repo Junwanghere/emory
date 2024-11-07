@@ -2,9 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/Home/index.vue'
 import Post from '@/views/Post/index.vue'
 import Auth from '@/views/Auth/index.vue'
-import { getAuth } from 'firebase/auth'
 import { useUserStore } from '@/stores/user'
-
+import { auth } from '@/firebase'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,14 +39,12 @@ const router = createRouter({
 
 
 router.beforeEach( (to) => {
-  const userStore = useUserStore()
-  const auth =  getAuth()
-  if(to.matched.some(record => record.meta.requiresAuth)){
-    console.log(auth.currentUser)
-      if (!userStore.user) {
-        showToast('請先登入')
-        return {path: '/auth/login'}
-      }
+  if(to.path === '/auth/login' && auth.currentUser){
+    console.log('true!')
+  }
+  if(to.matched.some(record => record.meta.requiresAuth) && !auth.currentUser){
+    showToast('請先登入')
+    return {path: '/auth/login'}
   }
   }
 )

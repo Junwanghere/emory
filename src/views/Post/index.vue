@@ -81,6 +81,7 @@ const postDiary = async () => {
   // 進行一次資料校驗以避免重複請求
   if (compareData.imgUrl == diaryImg.value && compareData.postContent == diaryContent.value && compareData.emotion == diaryEmotion.value) {
     return
+  // 如果已經刪除就不再發請求
   }else if(!diaryContent.value && !diaryEmotion.value && !diaryImg.value){
     return
   } else {

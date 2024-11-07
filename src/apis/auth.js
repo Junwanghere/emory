@@ -1,12 +1,11 @@
 import { getAuth,signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider,signInWithPopup } from 'firebase/auth'
-
+import { auth } from '@/firebase';
 
 
 
 export const authRegisterAPI = async (email, password) => {
   try{
     // 註冊用戶
-    const auth = getAuth();
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const user = userCredential.user  
     return '註冊成功'
@@ -26,7 +25,6 @@ export const authRegisterAPI = async (email, password) => {
 
 export const authLoginAPI = async (email, password) => {
   try{
-    const auth = getAuth();
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
     const user = userCredential.user  
     return user
@@ -39,13 +37,11 @@ export const authLoginAPI = async (email, password) => {
 
 //目前試不成功
 export const signInWithGoogleAPI = () => {
-  const auth = getAuth();
   const provider = new GoogleAuthProvider()
   signInWithRedirect(auth, provider);
 }
 
 export const signInWithPopupAPI = () => {
-  const auth = getAuth();
   const provider = new GoogleAuthProvider()
   return signInWithPopup(auth, provider)
     .then((result) => {
@@ -72,7 +68,6 @@ export const signInWithPopupAPI = () => {
 
 export const logOutAPI = async () => {
   try{
-    const auth = getAuth();
     await signOut(auth)
   }catch(e){
     console.log('登出失敗')

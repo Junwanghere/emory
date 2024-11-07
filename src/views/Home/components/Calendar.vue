@@ -134,9 +134,6 @@ const userSignOut = () => {
     .then(async () => {
       userStore.setUser(null)
       await logOutAPI()
-      router.push({
-        path: '/auth',
-      })
     }).catch(e => { })
 }
 

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, onBeforeRouteLeave } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/Home/index.vue'
 import Post from '@/views/Post/index.vue'
 import Auth from '@/views/Auth/index.vue'
@@ -39,10 +39,11 @@ const router = createRouter({
 
 
 
-router.beforeEach( (to, from) => {
+router.beforeEach( (to) => {
   const userStore = useUserStore()
   const auth =  getAuth()
   if(to.matched.some(record => record.meta.requiresAuth)){
+    console.log(auth.currentUser)
       if (!userStore.user) {
         showToast('請先登入')
         return {path: '/auth/login'}

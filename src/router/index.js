@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/Home/index.vue'
-import Post from '@/views/Post/index.vue'
+import Diary from '@/views/Diary/index.vue'
 import Auth from '@/views/Auth/index.vue'
 import { useUserStore } from '@/stores/user'
 import { auth } from '@/firebase'
@@ -20,9 +20,9 @@ const router = createRouter({
       redirect: '/'
     },
     {
-      path: '/post',
-      name: 'post',
-      component: Post,
+      path: '/diary',
+      name: 'diary',
+      component: Diary,
       meta: { requiresAuth: true } 
     },
     {

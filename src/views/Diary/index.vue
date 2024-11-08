@@ -4,7 +4,7 @@ import { useDateStore } from '@/stores/date';
 import { toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
-import { postUploadImgAPI, postNewPostAPI, postGetDiaryAPI, postDelDiaryAPI, postDelImgAPI } from '@/apis/post.js'
+import { diaryUploadImgAPI, diaryPostNewDiaryAPI, diaryGetDiaryAPI, diaryDelDiaryAPI, diaryDelImgAPI } from '@/apis/post.js'
 import { useUserStore } from '@/stores/user';
 
 
@@ -13,9 +13,7 @@ const dateStore = useDateStore()
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
-const userSelectDate = computed(() => {
-  return `${selectedYear.value}年${selectedMonth.value}月${selectedDay.value}日${selectedWeekday.value}`
-})
+
 const diaryEmotion = ref('')
 const resetDiary = () => {
   diaryImg.value = ''
@@ -45,7 +43,7 @@ const getDiaryData = async (fullDate) => {
 
   const uid = userStore.user.uid
   const period = `${selectedYear.value}年${selectedMonth.value}月`
-  const response = await postGetDiaryAPI(uid, fullDate, period)
+  const response = await diaryGetDiaryAPI(uid, fullDate, period)
   if (response) {
     Object.assign(compareData, response)
     diaryImg.value = response.imgUrl
@@ -71,7 +69,7 @@ const afterRead = async (file) => {
     forbidClick: true,
     loadingType: 'spinner',
   });
-  diaryImg.value = await postUploadImgAPI(file, userStore.user.uid, dateStore.selectedFullDate)
+  diaryImg.value = await diaryUploadImgAPI(file, userStore.user.uid, dateStore.selectedFullDate)
   toast.close()
 }
 
@@ -87,7 +85,7 @@ const postDiary = async () => {
   } else {
     const uid = userStore.user.uid
     const period = `${selectedYear.value}年${selectedMonth.value}月`
-    await postNewPostAPI(uid, dateStore.selectedFullDate, diaryImg.value, diaryContent.value, diaryEmotion.value, period)
+    await diaryPostNewDiaryAPI(uid, dateStore.selectedFullDate, diaryImg.value, diaryContent.value, diaryEmotion.value, period)
   }
 }
 
@@ -107,11 +105,11 @@ const delDiary = async () => {
   // 有內容才刪
   if(diaryContent.value || diaryEmotion.value ){
     const period = `${selectedYear.value}年${selectedMonth.value}月`
-    await postDelDiaryAPI(uid, dateStore.selectedFullDate, period)
+    await diaryDelDiaryAPI(uid, dateStore.selectedFullDate, period)
     // 刪除成功提示
   }
   if(diaryImg.value){
-    await postDelImgAPI(uid, dateStore.selectedFullDate)
+    await diaryDelImgAPI(uid, dateStore.selectedFullDate)
   }
   resetDiary()
 }
@@ -126,16 +124,11 @@ const changeDay = async (value) => {
   selectedDay.value = +newDay[2]
   selectedWeekday.value = newDay[3]
 
-  const data = {
-    year: selectedYear.value,
-    month: selectedMonth.value,
-    date: selectedDay.value,
-    day: selectedWeekday.value
-  }
-
   router.push({
-    name: 'post',
-    query: data
+    name: 'diary',
+    query: {
+      fullDate: dateStore.selectedFullDate
+    }
   })
 }
 

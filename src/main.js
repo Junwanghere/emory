@@ -24,4 +24,8 @@ onAuthStateChanged(auth, (user) => {
   }
 })
 
+
+
+
+
 app.mount('#app')

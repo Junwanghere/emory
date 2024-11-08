@@ -114,7 +114,7 @@ const openPost = (item) => {
   const { year, month, day, weekDay, fullDate } = item
   dateStore.setSelectedDate(year, month, day, weekDay)
   router.push({
-    name: 'post',
+    name: 'diary',
     query: {
       fullDate
     }

@@ -4,7 +4,7 @@ import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "f
 
 //在做這些操作之前都應該檢查一下使用者目前是否有登入
 
-export const postNewPostAPI = async (uid, date, imgUrl, postContent, emotion, period) => {
+export const diaryPostNewDiaryAPI = async (uid, date, imgUrl, postContent, emotion, period) => {
   try {
     const diaryRef = doc(db,`${uid}`,'diary', `${period}`,`${date}`)
     await setDoc(diaryRef, 
@@ -21,7 +21,7 @@ export const postNewPostAPI = async (uid, date, imgUrl, postContent, emotion, pe
 }
 
 
-export const postUploadImgAPI = async (file, uid, date) => {
+export const diaryUploadImgAPI = async (file, uid, date) => {
   try{
     // 取出file 實例
     const fileData = file.file
@@ -37,7 +37,7 @@ export const postUploadImgAPI = async (file, uid, date) => {
   }
 }
 
-export const postDelImgAPI = async (uid, date) => {
+export const diaryDelImgAPI = async (uid, date) => {
   const diaryImgRef = storageRef(storage, `${uid}/images/${date}`)
   try{
     await deleteObject(diaryImgRef)
@@ -46,7 +46,7 @@ export const postDelImgAPI = async (uid, date) => {
   }
 }
 
-export const postGetDiaryAPI = async (uid, date, period) => {
+export const diaryGetDiaryAPI = async (uid, date, period) => {
   try{
     const diaryRef = collection(db, `${uid}/diary/${period}`)
     const q = query(diaryRef, where('date', '==', `${date}`))
@@ -64,7 +64,7 @@ export const postGetDiaryAPI = async (uid, date, period) => {
   }
 }
 
-export const postDelDiaryAPI = async (uid, date, period) => {
+export const diaryDelDiaryAPI = async (uid, date, period) => {
   const diaryRef = doc(db, `${uid}/diary/${period}/${date}`)
   try{
     await deleteDoc(diaryRef)

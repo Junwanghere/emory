@@ -1,4 +1,4 @@
-import { getAuth,signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider,signInWithPopup } from 'firebase/auth'
+import { signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider,signInWithPopup } from 'firebase/auth'
 import { auth } from '@/firebase';
 
 

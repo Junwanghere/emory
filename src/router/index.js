@@ -4,6 +4,7 @@ import Post from '@/views/Post/index.vue'
 import Auth from '@/views/Auth/index.vue'
 import { useUserStore } from '@/stores/user'
 import { auth } from '@/firebase'
+import {  onAuthStateChanged,} from "firebase/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,16 +39,39 @@ const router = createRouter({
 
 
 
-router.beforeEach( (to) => {
-  if(to.path === '/auth/login' && auth.currentUser){
-    console.log('true!')
-  }
-  if(to.matched.some(record => record.meta.requiresAuth) && !auth.currentUser){
-    showToast('請先登入')
-    return {path: '/auth/login'}
-  }
-  }
-)
+const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, 
+      (user) => {
+        unsubscribe()
+        resolve(user)
+      },
+      (error) => {
+        reject(error)
+      }
+    )
+  })
+}
 
+
+
+router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore()
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+
+  // 等待 Firebase 完成身份驗證狀態的檢查
+  try {
+    const user = await getCurrentUser()
+    userStore.setUser(user)
+    if (requiresAuth && !user) {
+      next('/auth/login')
+    } else {
+      next()
+    }
+  } catch (error) {
+    console.error('Auth error in router guard:', error)
+    next('/auth/login')
+  }
+})
 
 export default router

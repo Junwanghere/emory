@@ -169,7 +169,6 @@ const emotionsData= [
 
 const setEmotion = (emotion) => {
   diaryEmotion.value = emotion
-  console.log(diaryEmotion.value )
 }
 
 </script>

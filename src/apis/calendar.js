@@ -1,6 +1,5 @@
-import { setDoc , collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
-import { storage, db, } from '@/firebase';
-import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {  collection, getDocs } from 'firebase/firestore';
+import { db, } from '@/firebase';
 
 export const calendarGetEmotionsAPI = async (uid, year, month) => {
   try{

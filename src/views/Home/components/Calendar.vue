@@ -48,7 +48,6 @@ const getMonthlyData = async() => {
 
 onMounted(async() => {
   await getMonthlyData()
-
 })
 
 

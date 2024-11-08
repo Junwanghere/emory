@@ -4,7 +4,7 @@ import { useDateStore } from '@/stores/date';
 import { toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
-import { diaryUploadImgAPI, diaryPostNewDiaryAPI, diaryGetDiaryAPI, diaryDelDiaryAPI, diaryDelImgAPI } from '@/apis/post.js'
+import { diaryUploadImgAPI, diaryPostNewDiaryAPI, diaryGetDiaryAPI, diaryDelDiaryAPI, diaryDelImgAPI } from '@/apis/diary.js'
 import { useUserStore } from '@/stores/user';
 
 

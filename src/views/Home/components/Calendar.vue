@@ -1,6 +1,6 @@
 <script setup name="Calendar">
-import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronDownIcon, PlayIcon } from '@heroicons/vue/20/solid'
-import { computed, onMounted, onUpdated, reactive, ref, toRefs, watch } from 'vue'
+import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlayIcon } from '@heroicons/vue/20/solid'
+import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import { useDateStore } from '@/stores/date';
@@ -13,7 +13,7 @@ const monthlyData = ref([])
 
 
 
-const { selectedYear, setMonth, selectedMonth, yearOfToday, monthOfToday, dateOfToday } = toRefs(useDateStore())
+const { selectedYear, setMonth, selectedMonth, yearOfToday, monthOfToday, dayOfToday } = toRefs(useDateStore())
 const userStore = useUserStore()
 const dateStore = useDateStore()
 dayjs.locale('zh-tw');
@@ -79,7 +79,7 @@ watch([selectedYear, selectedMonth], async() => {
 }, { immediate: true })
 
 const matchToday = (item) => {
-  if (item.year == yearOfToday.value && item.month == monthOfToday.value && item.date == dateOfToday.value) {
+  if (item.year == yearOfToday.value && item.month == monthOfToday.value && item.date == dayOfToday.value) {
     return true
   }
 }

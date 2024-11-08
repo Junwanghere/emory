@@ -11,18 +11,18 @@ export const useDateStore = defineStore('date',() => {
   const today = ref(dayjs().format('YYYY-M-D-dddd').split('-'))
   
   const yearOfToday = computed(() => {
-    return +today.value[0]
+    return today.value[0]
   })
 
   const monthOfToday = computed(() => {
-    return +today.value[1]
-  })
-
-  const dateOfToday = computed(() => {
-    return +today.value[2]
+    return today.value[1]
   })
 
   const dayOfToday = computed(() => {
+    return today.value[2]
+  })
+
+  const weekdayOfToday = computed(() => {
     return today.value[3]
   })
 
@@ -42,10 +42,10 @@ export const useDateStore = defineStore('date',() => {
   const selectYear = (value) => {
     selectedYear.value = value
   }
-  const selectedYear = ref(yearOfToday.value)
-  const selectedMonth = ref(monthOfToday.value)
-  const selectedDay = ref(dateOfToday.value)
-  const selectedWeekday = ref(dayOfToday.value)
+  const selectedYear = ref(+yearOfToday.value)
+  const selectedMonth = ref(+monthOfToday.value)
+  const selectedDay = ref(+dayOfToday.value)
+  const selectedWeekday = ref(weekdayOfToday.value)
   const selectedFullDate = computed(() => {
     return `${selectedYear.value}年${selectedMonth.value}月${selectedDay.value}日${selectedWeekday.value}`
   })
@@ -60,8 +60,8 @@ export const useDateStore = defineStore('date',() => {
     today,
     yearOfToday,
     monthOfToday,
-    dateOfToday,
     dayOfToday,
+    weekdayOfToday,
     setMonth,
     selectYear,
     selectedMonth,

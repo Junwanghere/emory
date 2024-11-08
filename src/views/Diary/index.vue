@@ -43,7 +43,7 @@ const getDiaryData = async (fullDate) => {
 
   const uid = userStore.user.uid
   const period = `${selectedYear.value}年${selectedMonth.value}月`
-  const response = await diaryGetDiaryAPI(uid, fullDate, period)
+  const response = await diaryGetDiaryAPI(uid, dateStore.indexDate)
   if (response) {
     Object.assign(compareData, response)
     diaryImg.value = response.imgUrl
@@ -85,7 +85,7 @@ const postDiary = async () => {
   } else {
     const uid = userStore.user.uid
     const period = `${selectedYear.value}年${selectedMonth.value}月`
-    await diaryPostNewDiaryAPI(uid, dateStore.selectedFullDate, diaryImg.value, diaryContent.value, diaryEmotion.value, period)
+    await diaryPostNewDiaryAPI(uid, dateStore.selectedFullDate, diaryImg.value, diaryContent.value, diaryEmotion.value, dateStore.indexDate)
   }
 }
 
@@ -105,11 +105,11 @@ const delDiary = async () => {
   // 有內容才刪
   if(diaryContent.value || diaryEmotion.value ){
     const period = `${selectedYear.value}年${selectedMonth.value}月`
-    await diaryDelDiaryAPI(uid, dateStore.selectedFullDate, period)
+    await diaryDelDiaryAPI(uid, dateStore.indexDate)
     // 刪除成功提示
   }
   if(diaryImg.value){
-    await diaryDelImgAPI(uid, dateStore.selectedFullDate)
+    await diaryDelImgAPI(uid, dateStore.indexDate)
   }
   resetDiary()
 }

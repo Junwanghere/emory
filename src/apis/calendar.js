@@ -1,11 +1,11 @@
-import {  collection, getDocs } from 'firebase/firestore';
+import {  collection, getDocs, query, where } from 'firebase/firestore';
 import { db, } from '@/firebase';
 
-export const calendarGetEmotionsAPI = async (uid, year, month) => {
+export const calendarGetEmotionsAPI = async (uid, startDate, endDate) => {
   try{
-    const period = `${year}年${month}月`
-    const diaryRef = collection(db, `${uid}`, 'diary', `${period}`)
-    const querySnapshot = await getDocs(diaryRef);
+    const diaryRef = collection(db,'users' ,`${uid}`, 'diary')
+    const q = query(diaryRef, where('indexDate', '>=', `${startDate}`), where('indexDate', '<=', `${endDate}`))
+    const querySnapshot = await getDocs(q);
     // 原本無資料會得到空陣列，透過傳null讓前端好做邏輯判斷
     if(querySnapshot.empty){
       return null

@@ -4,11 +4,12 @@ import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "f
 
 //在做這些操作之前都應該檢查一下使用者目前是否有登入
 
-export const diaryPostNewDiaryAPI = async (uid, date, imgUrl, postContent, emotion, period) => {
+export const diaryPostNewDiaryAPI = async (uid, date, imgUrl, postContent, emotion, indexDate) => {
   try {
-    const diaryRef = doc(db,`${uid}`,'diary', `${period}`,`${date}`)
+    const diaryRef = doc(db, 'users',`${uid}`,'diary', `${indexDate}`)
     await setDoc(diaryRef, 
-    {  
+    { 
+      indexDate, 
       date,
       imgUrl,
       postContent,
@@ -46,10 +47,10 @@ export const diaryDelImgAPI = async (uid, date) => {
   }
 }
 
-export const diaryGetDiaryAPI = async (uid, date, period) => {
+export const diaryGetDiaryAPI = async (uid, indexDate) => {
   try{
-    const diaryRef = collection(db, `${uid}/diary/${period}`)
-    const q = query(diaryRef, where('date', '==', `${date}`))
+    const diaryRef = collection(db, `users/${uid}/diary`)
+    const q = query(diaryRef, where('indexDate', '==', `${indexDate}`))
     const querySnapshot = await getDocs(q);
     // 原本無資料會得到空陣列，透過傳null讓前端好做邏輯判斷
     if(querySnapshot.empty){
@@ -64,8 +65,8 @@ export const diaryGetDiaryAPI = async (uid, date, period) => {
   }
 }
 
-export const diaryDelDiaryAPI = async (uid, date, period) => {
-  const diaryRef = doc(db, `${uid}/diary/${period}/${date}`)
+export const diaryDelDiaryAPI = async (uid, indexDate) => {
+  const diaryRef = doc(db, `users/${uid}/diary/${indexDate}`)
   try{
     await deleteDoc(diaryRef)
   }catch(e){

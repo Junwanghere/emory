@@ -9,7 +9,6 @@ import { useUserStore } from '@/stores/user';
 import { logOutAPI } from '@/apis/auth';
 import { calendarGetEmotionsAPI } from '@/apis/calendar';
 
-const monthlyData = ref([])
 
 
 
@@ -32,8 +31,11 @@ const numberToMonth = computed(() => {
 // 獲取該月資料並且渲染dayList
 const getMonthlyData = async() => {
   const uid = userStore.user.uid
-  monthlyData.value = await calendarGetEmotionsAPI(uid, selectedYear.value, selectedMonth.value)
-  monthlyData.value.forEach((item) => {
+  const startDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`).startOf('M').format('YYYY-MM-DD')
+  const endDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`).endOf('M').format('YYYY-MM-DD')
+  const monthlyData = await calendarGetEmotionsAPI(uid, startDate, endDate)
+  if(monthlyData){
+    monthlyData.forEach((item) => {
     const matchDay = dayList.value.find((day) => {
       return item.date == day.fullDate
     })
@@ -41,6 +43,9 @@ const getMonthlyData = async() => {
       matchDay.emotion = `/src/assets/emotions/${item.emotion}.png`
     }
   })
+  }else{
+    return
+  }
 }
 
 

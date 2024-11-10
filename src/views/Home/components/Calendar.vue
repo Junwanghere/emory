@@ -8,15 +8,16 @@ import {  useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { logOutAPI } from '@/apis/auth';
 import { calendarGetEmotionsAPI } from '@/apis/calendar';
+import { showToast } from 'vant';
 
 
 
 
-const { selectedYear, setMonth, selectedMonth, yearOfToday, monthOfToday, dayOfToday } = toRefs(useDateStore())
+const { selectedYear, setMonth, selectedMonth,selectedDay, yearOfToday, monthOfToday, dayOfToday } = toRefs(useDateStore())
 const userStore = useUserStore()
 const dateStore = useDateStore()
 dayjs.locale('zh-tw');
-const weekday = ['日', '一', '二', '三', '四', '五', '六']
+const weekday = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
 
 // 獲得各月有幾點
 const daysInMonth = computed(() => {
@@ -71,13 +72,16 @@ watch([selectedYear, selectedMonth], async() => {
   for (let i = 1; i < (daysInMonth.value + 1); i++) {
     const day = dayjs(`${selectedYear.value}-${selectedMonth.value}-${i}`).format('dddd')
     const date = `${selectedYear.value}年${selectedMonth.value}月${i}日${day}`
-    dayList.value.push({
+
+      dayList.value.push({
       fullDate: date,
       year: selectedYear.value,
       month: selectedMonth.value,
       day: i,
       weekDay: day
     })
+    
+
   }
   await getMonthlyData()
 }, { immediate: true })
@@ -117,6 +121,13 @@ const router = useRouter()
 const openPost = (item) => {
   // 打開日記頁面前，先設定好使用者選的天再push
   const { year, month, day, weekDay, fullDate } = item
+  if(year == yearOfToday.value &&
+    month == monthOfToday.value &&
+    day > dayOfToday.value
+  ){
+    showToast('這天還沒到來唷！')
+    return
+  }
   dateStore.setSelectedDate(year, month, day, weekDay)
   router.push({
     name: 'diary',
@@ -145,7 +156,7 @@ const userSignOut = () => {
 </script>
 
 <template>
-  <div class="calendar-container">
+  <div class="calendar-container p-1">
     <div class="header">
       <span @click="userSignOut" class="absolute top-3 right-5">登出</span>
       <div class="year-section" @click="showDatePicker = !showDatePicker">
@@ -153,11 +164,9 @@ const userSignOut = () => {
         <PlayIcon class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90" />
       </div>
       <div class="selectBar">
-        <ChevronDoubleLeftIcon @click="setMonth(-1)" class="hover:cursor-pointer	 size-7 font-bold">
-        </ChevronDoubleLeftIcon>
+        <PlayIcon @click="setMonth(-1)" class="ml-2 hover:cursor-pointer size-4 font-bold rotate-180" />
         <span class="month" @click="showDatePicker = true">{{ numberToMonth }}</span>
-        <ChevronDoubleRightIcon @click="setMonth(1)" class="hover:cursor-pointer size-7 font-bold">
-        </ChevronDoubleRightIcon>
+        <PlayIcon @click="setMonth(1)" class="ml-2 hover:cursor-pointer size-4 font-bold " />
       </div>
     </div>
     <div class="days-container">
@@ -200,6 +209,8 @@ const userSignOut = () => {
   width: 100%;
   display: flex;
   justify-content: space-evenly;
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.7  )
 }
 
 .days-container {
@@ -207,7 +218,7 @@ const userSignOut = () => {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(8, 1fr);
-  height: 90%;
+  height: 100%;
   align-items: center;
 }
 
@@ -235,8 +246,7 @@ const userSignOut = () => {
 }
 
 .year {
-  font-size: 2rem;
-  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
@@ -254,11 +264,12 @@ const userSignOut = () => {
 }
 
 .selectBar {
-  width: 40%;
+  width: 38%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 1.5rem;
+  font-weight: bold;
 }
 
 .highlight {

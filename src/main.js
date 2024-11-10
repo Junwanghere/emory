@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from './router'
 import {  onAuthStateChanged,} from "firebase/auth";
 import { useUserStore } from './stores/user'
-import { auth } from './firebase'
+import { auth } from './firebase/firebase'
 
 const app = createApp(App)
 

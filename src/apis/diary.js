@@ -1,5 +1,5 @@
 import { setDoc , collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
-import { storage, db, } from '@/firebase';
+import { storage, db, } from '@/firebase/firebase';
 import {  ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 //在做這些操作之前都應該檢查一下使用者目前是否有登入

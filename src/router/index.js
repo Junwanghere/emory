@@ -3,7 +3,7 @@ import Home from '@/views/Home/index.vue'
 import Diary from '@/views/Diary/index.vue'
 import Auth from '@/views/Auth/index.vue'
 import { useUserStore } from '@/stores/user'
-import { auth } from '@/firebase'
+import { auth } from '@/firebase/firebase'
 import {  onAuthStateChanged,} from "firebase/auth";
 
 const router = createRouter({

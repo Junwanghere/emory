@@ -118,55 +118,86 @@ watch(() => {
 
 </script>
 <template>
-  <div class="welcome-sec text-3xl">Welcome!</div>
+  <div class="container w-screen h-screen flex items-center justify-center">
+    <van-form  class="w-10/12" ref="loginForm" v-if="displayMode == 'login'" @submit="onSignIn">
+      <van-cell-group inset>
+        <van-field  left-icon="contact" v-model="userEmail" name="Email"  placeholder="請輸入email" :rules="useremailRule" />
+        <van-field v-model="password" type="password" name="password" left-icon="lock" placeholder="密碼"
+          :rules="[{ required: true, message: '密碼不得為空', trigger: 'onBlur' }]" />
+      </van-cell-group>
+      <div class="link-container ">
+        <a href="#" @click="toggleMode">立即註冊</a>
+      </div>
 
-  <van-form ref="loginForm" v-if="displayMode == 'login'" @submit="onSignIn">
-    <van-cell-group inset>
-      <van-field v-model="userEmail" name="Email" label="Email" placeholder="請輸入email" :rules="useremailRule" />
-      <van-field v-model="password" type="password" name="password" label="密碼" placeholder="密碼"
-        :rules="[{ required: true, message: '密碼不得為空', trigger: 'onBlur' }]" />
-    </van-cell-group>
-    <div class="link-container">
-      <a href="#" @click="toggleMode">立即註冊</a>
-    </div>
+      <div >
+        <van-button round block type="primary" native-type="submit">
+          提交
+        </van-button>
+        <van-button icon="/official-Google-Logo-PNG-Image.png" @click="loginWithGoogle" style="margin-top: 10px; " round
+          block>
+          用Google開始
+        </van-button>
+      </div>
+    </van-form>
 
-    <div style="margin: 16px;">
-      <van-button round block type="primary" native-type="submit">
-        提交
-      </van-button>
-      <van-button icon="/official-Google-Logo-PNG-Image.png" @click="loginWithGoogle" style="margin-top: 5px;" round
-        block>
-        用Google開始
-      </van-button>
-    </div>
-  </van-form>
+    <van-form class="w-10/12" ref="registerForm" :show-error-message="true" v-else @submit="onRegister">
+      <van-cell-group inset>
+        <van-field left-icon="contact" v-model="userEmail" name="Email"  placeholder="請輸入email" :rules="useremailRule" />
+        <van-field v-model="password" type="password" name="密碼" left-icon="lock" placeholder="密碼" :rules="passwordRule" />
+        <van-field v-model="confirmPassword" type="password" name="確認密碼" left-icon="lock" placeholder="確認密碼"
+          :rules="confirmPasswordRule" />
 
-  <van-form ref="registerForm" :show-error-message="true" v-else @submit="onRegister">
-    <van-cell-group inset>
-      <van-field v-model="userEmail" name="Email" label="Email" placeholder="請輸入email" :rules="useremailRule" />
-      <van-field v-model="password" type="password" name="密碼" label="密碼" placeholder="密碼" :rules="passwordRule" />
-      <van-field v-model="confirmPassword" type="password" name="確認密碼" label="確認密碼" placeholder="密碼"
-        :rules="confirmPasswordRule" />
-
-    </van-cell-group>
-    <a href="#" @click="toggleMode">去登入</a>
-    <div style="margin: 16px;">
+      </van-cell-group>
+      <a href="#" @click="toggleMode">去登入</a>
       <van-button round block type="primary" native-type="submit">
         註冊
       </van-button>
-    </div>
-  </van-form>
+    </van-form>
+  </div>
+
 
 </template>
 
 <style scoped>
+
+:deep(.van-icon) {
+  font-size: 1.5rem;
+}
+
+:deep(.van-field__left-icon) {
+  margin-left: 0.8rem;
+}
+
+:deep(.van-field__error-message) {
+  position: absolute;
+  top: 33px;
+  left: 0;
+}
+
 .welcome-sec {
   width: 100%;
   aspect-ratio: 1 / 0.9;
   border: 1px solid black
 }
 
-.van-field__label {
-  width: 3rem;
+.van-cell-group{
+  margin: 0;
 }
+
+.van-cell {
+  padding: 0;
+  height: 50px;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 999px;
+  margin-bottom: 15px;
+  overflow:unset;
+}
+
+:deep(.van-field__control){
+  width: 90%;
+}
+
+
 </style>

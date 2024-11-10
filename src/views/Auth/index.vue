@@ -88,7 +88,7 @@ const toggleMode = () => {
 
 const useremailRule = [
   { required: true, message: '請填寫email', trigger: 'onBlur' },
-  { pattern: /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/, message: '不是有效的email', trigger: 'onChange' }
+  { pattern: /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/, message: '不是有效的email', trigger: ['onChange', 'onBlur'] }
 ]
 
 const passwordRule = [
@@ -118,22 +118,28 @@ watch(() => {
 
 </script>
 <template>
-  <div class="container w-screen h-screen flex items-center justify-center">
+  <div class="container pb-8 w-full	 h-screen flex items-center justify-center">
     <van-form  class="w-10/12" ref="loginForm" v-if="displayMode == 'login'" @submit="onSignIn">
+      <div class="w-full overflow-hidden	">
+        <img class="object-cover w-full h-full	scale-150" src="@/assets/emotions/emory4.png" alt="">
+      </div>
+      <h2 class="text-3xl font-bold text-center p-5">登入</h2>
       <van-cell-group inset>
         <van-field  left-icon="contact" v-model="userEmail" name="Email"  placeholder="請輸入email" :rules="useremailRule" />
         <van-field v-model="password" type="password" name="password" left-icon="lock" placeholder="密碼"
           :rules="[{ required: true, message: '密碼不得為空', trigger: 'onBlur' }]" />
       </van-cell-group>
-      <div class="link-container ">
-        <a href="#" @click="toggleMode">立即註冊</a>
-      </div>
+      <p class="tracking-wide	 text-xs text-right mt-3 mb-2 pr-2">
+        還沒有帳號嗎？
+        <a href="#" @click="toggleMode" class="underline underline-offset-2">立即註冊</a>
+      </p>
 
       <div >
-        <van-button round block type="primary" native-type="submit">
-          提交
+        <van-button color="#FECE2E" size="large" round block type="primary" native-type="submit" style="margin-bottom: 10px;">
+          登入
         </van-button>
-        <van-button icon="/official-Google-Logo-PNG-Image.png" @click="loginWithGoogle" style="margin-top: 10px; " round
+
+        <van-button style="border:none; box-shadow:1px 1px 5px rgba(0,0,0,0.15)" size="large" icon="/official-Google-Logo-PNG-Image.png" @click="loginWithGoogle"  round
           block>
           用Google開始
         </van-button>
@@ -141,6 +147,10 @@ watch(() => {
     </van-form>
 
     <van-form class="w-10/12" ref="registerForm" :show-error-message="true" v-else @submit="onRegister">
+      <div class="w-full overflow-hidden	">
+        <img class="object-cover w-full h-full	scale-150" src="@/assets/emotions/emory3.png" alt="">
+      </div>
+      <h2 class="text-3xl font-bold text-center p-5">註冊</h2> 
       <van-cell-group inset>
         <van-field left-icon="contact" v-model="userEmail" name="Email"  placeholder="請輸入email" :rules="useremailRule" />
         <van-field v-model="password" type="password" name="密碼" left-icon="lock" placeholder="密碼" :rules="passwordRule" />
@@ -148,8 +158,8 @@ watch(() => {
           :rules="confirmPasswordRule" />
 
       </van-cell-group>
-      <a href="#" @click="toggleMode">去登入</a>
-      <van-button round block type="primary" native-type="submit">
+      <a class="tracking-wide	 text-xs block text-right mt-3 mb-2 pr-2 underline underline-offset-2 " href="#" @click="toggleMode">去登入</a>
+      <van-button color="#59B379" size="large" round block type="primary" native-type="submit">
         註冊
       </van-button>
     </van-form>
@@ -159,6 +169,7 @@ watch(() => {
 </template>
 
 <style scoped>
+
 
 :deep(.van-icon) {
   font-size: 1.5rem;
@@ -170,7 +181,7 @@ watch(() => {
 
 :deep(.van-field__error-message) {
   position: absolute;
-  top: 33px;
+  top: 150%;
   left: 0;
 }
 
@@ -182,6 +193,8 @@ watch(() => {
 
 .van-cell-group{
   margin: 0;
+  overflow: visible;
+  background-color: transparent;
 }
 
 .van-cell {
@@ -189,14 +202,29 @@ watch(() => {
   height: 50px;
   gap: 10px;
   align-items: center;
-  border: 1px solid black;
   border-radius: 999px;
-  margin-bottom: 15px;
-  overflow:unset;
+  margin-top: 20px;
+  overflow: unset;
+  background-color: #F1F1F1;
 }
 
-:deep(.van-field__control){
+:deep(.van-field__control) {
   width: 90%;
+  font-size: 0.9rem;
+}
+
+:deep(.van-field__value) {
+  position: relative
+}
+
+
+.container::before {
+  content: url(@/assets/emotions/happy.png);
+  display: inline-block;
+  position: absolute;
+  bottom: -2rem;
+  right: -1rem;
+  transform: scale(120%) rotate(-20deg);
 }
 
 

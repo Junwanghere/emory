@@ -6,4 +6,9 @@ import { RouterView } from 'vue-router';
 <template>
   <RouterView></RouterView>
 </template>
-<style></style>
+<style>
+:root:root {
+  --van-base-font: "Noto Sans TC, sans-serif"
+}
+
+</style>

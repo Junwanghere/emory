@@ -5,6 +5,7 @@ import Auth from '@/views/Auth/index.vue'
 import { useUserStore } from '@/stores/user'
 import { auth } from '@/firebase/firebase'
 import {  onAuthStateChanged,} from "firebase/auth";
+import Analysis from '@/views/Analysis/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,11 @@ const router = createRouter({
     {
       path: '/auth',
       redirect: '/auth/login'
+    },
+    {
+      path: '/analysis',
+      component: Analysis,
+      meta: { requiresAuth: true } 
     }
   ]
 })

@@ -87,7 +87,7 @@ watch([selectedYear, selectedMonth], async() => {
 }, { immediate: true })
 
 const matchToday = (item) => {
-  if (item.year == yearOfToday.value && item.month == monthOfToday.value && item.date == dayOfToday.value) {
+  if (item.year == yearOfToday.value && item.month == monthOfToday.value && item.day == dayOfToday.value) {
     return true
   }
 }

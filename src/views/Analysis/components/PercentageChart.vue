@@ -1,59 +1,83 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useUserStore } from '@/stores/user';
-import dayjs from 'dayjs';
-import { calendarGetEmotionsAPI } from '@/apis/calendar';
-import { useDateStore } from '@/stores/date';
-import { storeToRefs } from 'pinia';
+import { ref, onMounted, watch, inject } from 'vue'
 
-
-const userStore = useUserStore()
-const dateStore = useDateStore()
-const { selectedMonth, selectedYear } = storeToRefs(dateStore) 
-
-const getMonthlyData = async() => {
-  const uid = userStore.user.uid
-  const startDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`).startOf('M').format('YYYY-MM-DD')
-  const endDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`).endOf('M').format('YYYY-MM-DD')
-  const monthlyData = await calendarGetEmotionsAPI(uid, startDate, endDate)
-  console.log(monthlyData)  
-}
-
-onMounted( async() => {
-  await getMonthlyData()
-})
 
 
 const emotionData = ref([
   {
     emotion: 'veryhappy', 
-    activeImg:   'src/assets/emotions/veryhappy.png', inActiveImg: 'src/assets/emotions/notchosenveryhappy.png',
-    perctenage: '25%'
+    activeImg:   'src/assets/emotions/veryhappy.png', 
+    inActiveImg: 'src/assets/emotions/notchosenveryhappy.png',
+    percentage: '0%'
   },
   {
     emotion: 'happy', 
     activeImg:  'src/assets/emotions/happy.png', 
     inActiveImg: 'src/assets/emotions/notchosenhappy.png',
-    perctenage: '25%'
+    percentage: '0%'
   },
   {
     emotion: 'neutral', 
-    activeImg: 'src/assets/emotions/neutral.png', inActiveImg: 'src/assets/emotions/notchosenneutral.png',
-    perctenage: '25%'
+    activeImg: 'src/assets/emotions/neutral.png', 
+    inActiveImg: 'src/assets/emotions/notchosenneutral.png',
+    percentage: '0%'
   },
   {
     emotion: 'sad', 
     activeImg: 'src/assets/emotions/sad.png',
     inActiveImg: 'src/assets/emotions/notchosensad.png',
-    perctenage: '25%'
+    percentage: '0%'
   },
   {
     emotion: 'verysad', 
     activeImg:   'src/assets/emotions/verysad.png',
     inActiveImg:   'src/assets/emotions/notchosenverysad.png', 
-    perctenage: '25%'
+    percentage: '0%'
   }
 ])
+
+
+
+const monthlyData = inject('monthlyData')
+
+const getEmotionPercentage = () => {
+  const emotionMap = new Map()
+  if(monthlyData.value){
+    let emotionCount = 0
+    monthlyData.value.forEach(data => {
+      if(data.emotion){
+        emotionCount++
+        if(emotionMap.has(data.emotion)){
+          emotionMap.set(data.emotion, emotionMap.get(data.emotion) + 1)
+        }else{
+          emotionMap.set(data.emotion, 1)
+        }
+      }
+    })
+    if(emotionCount){
+      emotionMap.forEach((value, key) => {
+        emotionMap.set(key, Math.round((value/emotionCount)*100))
+      })
+      emotionMap.forEach((value, key) => {
+        emotionData.value.forEach((data) => {
+          if(data.emotion == key){
+            data.percentage = `${value}%`
+          }
+        })
+      })
+    }else{
+      //資料裡面沒有emotion
+      return
+    }
+  }else{
+    //沒抓到資料
+    return
+  }
+} 
+
+watch(monthlyData, () => {
+  getEmotionPercentage()
+})
 
 </script>
 <template>
@@ -64,15 +88,15 @@ const emotionData = ref([
         <div class="emotion-container">
           <img class="aspect-square" :src="item.activeImg" alt="">
         </div>
-        <p class="percentage-text text-center mt-3 bg-gray-200 rounded-2xl">{{ item.perctenage }}</p>
+        <p class="percentage-text text-center mt-3 bg-gray-200 rounded-2xl">{{ item.percentage }}</p>
       </div>
     </div>
     <div class="percentage-bar w-fill mt-5 flex rounded-full overflow-hidden bg-gray-200">
-      <div :style="{ width: emotionData[0].perctenage}" class="bar bg-[#C1E3DC]"></div>
-      <div :style="{ width: emotionData[1].perctenage}" class="bar bg-[#E5F5E2]"></div>
-      <div :style="{ width: emotionData[2].perctenage}" class="bar bg-[#FFFADF]"></div>
-      <div :style="{ width: emotionData[3].perctenage}" class="bar bg-[#FFE9D8]"></div>
-      <div :style="{ width: emotionData[4].perctenage}" class="bar bg-[#F3A2A2]"></div>
+      <div :style="{ width: emotionData[0].percentage}" class="bar bg-[#C1E3DC]"></div>
+      <div :style="{ width: emotionData[1].percentage}" class="bar bg-[#E5F5E2]"></div>
+      <div :style="{ width: emotionData[2].percentage}" class="bar bg-[#FFFADF]"></div>
+      <div :style="{ width: emotionData[3].percentage}" class="bar bg-[#FFE9D8]"></div>
+      <div :style="{ width: emotionData[4].percentage}" class="bar bg-[#F3A2A2]"></div>
     </div>
   </div>
 </template>

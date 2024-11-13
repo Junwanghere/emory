@@ -25,6 +25,8 @@ const getMonthlyData = async () => {
 getMonthlyData()
 
 provide('monthlyData', monthlyData)
+
+
 </script>
 <template>
   <LineChart  />

@@ -112,9 +112,6 @@ const data = {
 
 </script>
 <template>
-  <p>
-    Hi
-  </p>
   <Line class="border	rounded-2xl" :data="data" :options="options" />
 </template>
 

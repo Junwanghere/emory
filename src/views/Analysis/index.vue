@@ -2,7 +2,7 @@
 import LineChart from './components/LineChart.vue';
 </script>
 <template>
-  <LineChart/>
+  <LineChart />
 </template>
 <style>
 </style>

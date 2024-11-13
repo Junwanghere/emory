@@ -32,10 +32,6 @@ const router = createRouter({
       component: Auth,
     },
     {
-      path: '/auth',
-      redirect: '/auth/login'
-    },
-    {
       path: '/analysis',
       component: Analysis,
       meta: { requiresAuth: true } 

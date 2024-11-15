@@ -6,19 +6,33 @@ import { useUserStore } from '@/stores/user'
 import { auth } from '@/firebase/firebase'
 import {  onAuthStateChanged,} from "firebase/auth";
 import Analysis from '@/views/Analysis/index.vue'
+import Calendar from '@/views/Calendar/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: Home,
-      meta: { requiresAuth: true } 
+      meta: { requiresAuth: true },
+      redirect: '/home/calendar',
+      children: [
+        {
+          path: 'calendar',
+          name: 'calendar',
+          component: Calendar
+        },
+        {
+          path: 'analysis',
+          name: 'analysis',
+          component: Analysis
+        }
+      ]
     },
     {
-      path: '/home',
-      redirect: '/'
+      path: '/',
+      redirect: '/home',
     },
     {
       path: '/diary',
@@ -30,11 +44,6 @@ const router = createRouter({
       path:'/auth/:mode',
       name: 'auth',
       component: Auth,
-    },
-    {
-      path: '/analysis',
-      component: Analysis,
-      meta: { requiresAuth: true } 
     }
   ]
 })

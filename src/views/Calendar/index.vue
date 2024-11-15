@@ -4,7 +4,7 @@ import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import { useDateStore } from '@/stores/date';
-import {  useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { logOutAPI } from '@/apis/auth';
 import { calendarGetEmotionsAPI } from '@/apis/calendar';
@@ -13,7 +13,7 @@ import { showToast } from 'vant';
 
 
 
-const { selectedYear, setMonth, selectedMonth,selectedDay, yearOfToday, monthOfToday, dayOfToday } = toRefs(useDateStore())
+const { selectedYear, setMonth, selectedMonth, selectedDay, yearOfToday, monthOfToday, dayOfToday } = toRefs(useDateStore())
 const userStore = useUserStore()
 const dateStore = useDateStore()
 dayjs.locale('zh-tw');
@@ -30,21 +30,21 @@ const numberToMonth = computed(() => {
 })
 
 // 獲取該月資料並且渲染dayList
-const getMonthlyData = async() => {
+const getMonthlyData = async () => {
   const uid = userStore.user.uid
   const startDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`).startOf('M').format('YYYY-MM-DD')
   const endDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`).endOf('M').format('YYYY-MM-DD')
   const monthlyData = await calendarGetEmotionsAPI(uid, startDate, endDate)
-  if(monthlyData){
+  if (monthlyData) {
     monthlyData.forEach((item) => {
-    const matchDay = dayList.value.find((day) => {
-      return item.date == day.fullDate
+      const matchDay = dayList.value.find((day) => {
+        return item.date == day.fullDate
+      })
+      if (item.emotion) {
+        matchDay.emotion = `/src/assets/emotions/${item.emotion}.png`
+      }
     })
-    if(item.emotion){
-      matchDay.emotion = `/src/assets/emotions/${item.emotion}.png`
-    }
-  })
-  }else{
+  } else {
     return
   }
 }
@@ -52,14 +52,14 @@ const getMonthlyData = async() => {
 
 
 
-onMounted(async() => {
+onMounted(async () => {
   await getMonthlyData()
 })
 
 
 // 根據該年該月生成日立
 let dayList = ref([])
-watch([selectedYear, selectedMonth], async() => {
+watch([selectedYear, selectedMonth], async () => {
   const firstDayOfMonth = dayjs(`${selectedYear.value}-${selectedMonth.value}`).format('d')
   dayList.value = []
   for (let i = 0; i < firstDayOfMonth; i++) {
@@ -73,14 +73,14 @@ watch([selectedYear, selectedMonth], async() => {
     const day = dayjs(`${selectedYear.value}-${selectedMonth.value}-${i}`).format('dddd')
     const date = `${selectedYear.value}年${selectedMonth.value}月${i}日${day}`
 
-      dayList.value.push({
+    dayList.value.push({
       fullDate: date,
       year: selectedYear.value,
       month: selectedMonth.value,
       day: i,
       weekDay: day
     })
-    
+
 
   }
   await getMonthlyData()
@@ -121,10 +121,10 @@ const router = useRouter()
 const openPost = (item) => {
   // 打開日記頁面前，先設定好使用者選的天再push
   const { year, month, day, weekDay, fullDate } = item
-  if(year == yearOfToday.value &&
+  if (year == yearOfToday.value &&
     month == monthOfToday.value &&
     day > dayOfToday.value
-  ){
+  ) {
     showToast('這天還沒到來唷！')
     return
   }
@@ -210,7 +210,7 @@ const userSignOut = () => {
   display: flex;
   justify-content: space-evenly;
   font-size: 0.8rem;
-  color: rgba(0, 0, 0, 0.7  )
+  color: rgba(0, 0, 0, 0.7)
 }
 
 .days-container {

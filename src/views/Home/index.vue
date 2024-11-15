@@ -1,11 +1,11 @@
 <script setup name="Home">
-import Calendar from './components/Calendar.vue';
 import Navigation from './components/Navigation.vue';
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
   <div>
-    <Calendar></Calendar>
+    <RouterView />
     <Navigation></Navigation>
   </div>
 </template>

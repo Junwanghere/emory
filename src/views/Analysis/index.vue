@@ -11,7 +11,7 @@ import { storeToRefs } from 'pinia';
 
 const userStore = useUserStore()
 const dateStore = useDateStore()
-const { selectedMonth, selectedYear } = storeToRefs(dateStore) 
+const { selectedMonth, selectedYear } = storeToRefs(dateStore)
 const monthlyData = ref([])
 
 const getMonthlyData = async () => {
@@ -29,8 +29,7 @@ provide('monthlyData', monthlyData)
 
 </script>
 <template>
-  <LineChart  />
+  <LineChart :monthlyData="monthlyData" />
   <PercentageChart />
 </template>
-<style>
-</style>
+<style></style>

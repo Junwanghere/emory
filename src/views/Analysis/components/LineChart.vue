@@ -12,7 +12,10 @@ import {
   TimeScale,
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, toRefs } from 'vue'
+
+
+
 
 ChartJS.register(
   CategoryScale,
@@ -36,7 +39,7 @@ const options = {
     },
     tooltip: {
       callbacks: {
-        label: function(tooltipItem) {
+        label: function (tooltipItem) {
           const yValue = tooltipItem.raw.y;
           return `心情: ${yValue}`;
         }
@@ -77,7 +80,7 @@ const options = {
         displayFormats: {
           day: 'MM/DD'
         },
-        tooltipFormat: 'YYYY-MM-DD' 
+        tooltipFormat: 'YYYY-MM-DD'
       },
       ticks: {
         maxTicksLimit: 7,
@@ -88,14 +91,17 @@ const options = {
         }
       },
       alignToPixels: true,
-      min: '2024-11-01',  
-      max: '2024-12-01', 
+      min: '2024-11-01',
+      max: '2024-12-01',
       border: {
         display: false
       },
     }
   },
 }
+
+
+const monthlyEmoData = ref([])
 
 const data = {
   datasets: [
@@ -104,19 +110,40 @@ const data = {
       backgroundColor: '#7EC69A',
       borderColor: '#7EC69A',
       borderWidth: 2,
-      data: [{x: '2024-11-01', y: 3}, {x: '2024-11-03', y: 3}, {x: '2024-11-06', y: 3},{x: '2024-11-11', y: 3}, {x: '2024-11-16', y: 1}, {x: '2024-11-21', y: 1}, {x: '2024-11-30', y: 1}, {x: '2024-12-01', y: 1}]
+      data: monthlyEmoData.value
     }
   ],
 }
 
+const props = defineProps({ monthlyData: { type: Array, default: ref([]) } })
+const { monthlyData } = toRefs(props)
+
+const valueOfEmotions = {
+  veryhappy: 5,
+  happy: 4,
+  neutral: 3,
+  sad: 2,
+  verysad: 1
+}
+
+const formatMonData = (newData) => {
+  monthlyEmoData.value = []
+  newData.forEach(data => {
+    if (data.emotion) {
+      monthlyEmoData.value.push({ x: data.indexDate, y: valueOfEmotions[data.emotion] })
+    }
+  })
+}
+
+
+watch(monthlyData, (newData) => {
+  formatMonData(newData)
+  console.log(monthlyEmoData.value)
+})
 
 </script>
 <template>
   <Line class="border	rounded-2xl" :data="data" :options="options" />
 </template>
 
-<style scoped>
-
-
-
-</style>
+<style scoped></style>

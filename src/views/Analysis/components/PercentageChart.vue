@@ -8,31 +8,31 @@ const emotionData = ref([
     emotion: 'veryhappy',
     activeImg: '/src/assets/emotions/veryhappy.png',
     inActiveImg: '/src/assets/emotions/notchosenveryhappy.png',
-    percentage: '0'
+    percentage: 0
   },
   {
     emotion: 'happy',
     activeImg: '/src/assets/emotions/happy.png',
     inActiveImg: '/src/assets/emotions/notchosenhappy.png',
-    percentage: '0'
+    percentage: 0
   },
   {
     emotion: 'neutral',
     activeImg: '/src/assets/emotions/neutral.png',
     inActiveImg: '/src/assets/emotions/notchosenneutral.png',
-    percentage: '0'
+    percentage: 0
   },
   {
     emotion: 'sad',
     activeImg: '/src/assets/emotions/sad.png',
     inActiveImg: '/src/assets/emotions/notchosensad.png',
-    percentage: '0'
+    percentage: 0
   },
   {
     emotion: 'verysad',
     activeImg: '/src/assets/emotions/verysad.png',
     inActiveImg: '/src/assets/emotions/notchosenverysad.png',
-    percentage: '0'
+    percentage: 0
   }
 ])
 
@@ -54,9 +54,10 @@ const getEmotionPercentage = () => {
         }
       }
     })
+    // 有填寫emotion
     if (emotionCount) {
       emotionMap.forEach((value, key) => {
-        emotionMap.set(key, Math.round((value / emotionCount) * 100))
+        emotionMap.set(key, (value / emotionCount) * 100)
       })
       emotionMap.forEach((value, key) => {
         emotionData.value.forEach((data) => {
@@ -77,7 +78,7 @@ const getEmotionPercentage = () => {
 
 watch(monthlyData, () => {
   getEmotionPercentage()
-})
+}, { immediate: true })
 
 </script>
 <template>
@@ -89,7 +90,7 @@ watch(monthlyData, () => {
           <img class="aspect-square" :src="item.activeImg" alt="">
         </div>
         <p :class="{ 'valid-percentage': item.percentage }"
-          class="percentage-text text-center mt-3 bg-gray-200 rounded-2xl">{{ `${item.percentage}%` }}</p>
+          class="percentage-text text-center mt-3 bg-gray-200 rounded-2xl">{{ `${item.percentage.toFixed()}%` }}</p>
       </div>
     </div>
     <div class="percentage-bar w-fill mt-5 flex rounded-full overflow-hidden bg-gray-200">

@@ -1,8 +1,10 @@
 <script setup name="Tabbar">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+
 
 const router = useRouter()
+const route = useRoute()
 
 const toPath = (name) => {
   router.push({
@@ -11,6 +13,12 @@ const toPath = (name) => {
 }
 
 const active = ref(0)
+const footerRelations = ['calendar', 'analysis']
+
+watch(() => route.name, (value) => {
+  const currentPosition = footerRelations.indexOf(value)
+  active.value = currentPosition
+}, { immediate: true })
 </script>
 
 <template>

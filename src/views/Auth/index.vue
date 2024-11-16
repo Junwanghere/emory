@@ -81,7 +81,7 @@ const toggleMode = () => {
   } else {
     resetInfo()
     router.push({
-      path: '/auth'
+      path: 'login'
     })
   }
 }
@@ -118,7 +118,7 @@ watch(() => {
 
 </script>
 <template>
-  <div class="container pb-8 w-full	 h-screen flex items-center justify-center">
+  <div class="container overflow-hidden pb-8 w-full	relative h-screen flex items-center justify-center">
     <van-form  class="w-10/12" ref="loginForm" v-if="displayMode == 'login'" @submit="onSignIn">
       <div class="w-full overflow-hidden	">
         <img class="object-cover w-full h-full	scale-150" src="@/assets/emotions/emory4.png" alt="">

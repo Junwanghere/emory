@@ -1,7 +1,7 @@
 <script setup name="Analysis">
 import LineChart from './components/LineChart.vue';
 import PercentageChart from './components/PercentageChart.vue';
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted, provide, computed } from 'vue'
 import { useUserStore } from '@/stores/user';
 import dayjs from 'dayjs';
 import { calendarGetEmotionsAPI } from '@/apis/calendar';
@@ -14,11 +14,17 @@ const dateStore = useDateStore()
 const { selectedMonth, selectedYear } = storeToRefs(dateStore)
 const monthlyData = ref([])
 
+const startDate = computed(() => {
+  return dayjs(`${selectedYear.value}-${selectedMonth.value}`).startOf('M').format('YYYY-MM-DD')
+})
+const endDate = computed(() => {
+  return dayjs(`${selectedYear.value}-${selectedMonth.value}`).add(30, 'day').format('YYYY-MM-DD')
+})
+
 const getMonthlyData = async () => {
   const uid = userStore.user.uid
-  const startDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`).startOf('M').format('YYYY-MM-DD')
-  const endDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`).endOf('M').format('YYYY-MM-DD')
-  const data = await calendarGetEmotionsAPI(uid, startDate, endDate)
+  
+  const data = await calendarGetEmotionsAPI(uid, startDate.value, endDate.value)
   monthlyData.value = data
 }
 
@@ -29,7 +35,7 @@ provide('monthlyData', monthlyData)
 
 </script>
 <template>
-  <LineChart :monthlyData="monthlyData" />
+  <LineChart :startDate="startDate" :endDate="endDate" :monthlyData="monthlyData" />
   <PercentageChart />
 </template>
 <style></style>

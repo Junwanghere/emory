@@ -12,9 +12,7 @@ import {
   TimeScale,
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
-import { ref, onMounted, watch, toRefs } from 'vue'
-
-
+import { ref, watch, toRefs, computed } from 'vue'
 
 
 ChartJS.register(
@@ -29,7 +27,8 @@ ChartJS.register(
 )
 
 
-const options = {
+const options = computed(() => {
+  return {
   responsive: true,
   maintainAspectRatio: true,
   clip: false,
@@ -91,33 +90,40 @@ const options = {
         }
       },
       alignToPixels: true,
-      min: '2024-11-01',
-      max: '2024-12-01',
+      min: startDate.value,
+      max: endDate.value,
       border: {
         display: false
       },
     }
   },
 }
+}) 
 
 
+const lineChart = ref(null)
 const monthlyEmoData = ref([])
 
-const data = {
-  datasets: [
-    {
-      label: '心情評分',
-      backgroundColor: '#7EC69A',
-      borderColor: '#7EC69A',
-      borderWidth: 2,
-      data: monthlyEmoData.value
-    }
-  ],
-}
+const data = computed(() => {
+    return {
+    datasets: [
+      {
+        label: '心情評分',
+        backgroundColor: '#7EC69A',
+        borderColor: '#7EC69A',
+        borderWidth: 2,
+        data: monthlyEmoData.value
+      }
+    ]
+  }
+})
 
-const props = defineProps({ monthlyData: { type: Array, default: ref([]) } })
-const { monthlyData } = toRefs(props)
-
+const props = defineProps({ 
+  monthlyData: { type: Array, default: ref([]) },
+  endDate: {type: String},
+  startDate: {type: String} 
+})
+const { monthlyData, endDate, startDate } = toRefs(props)
 const valueOfEmotions = {
   veryhappy: 5,
   happy: 4,
@@ -138,12 +144,12 @@ const formatMonData = (newData) => {
 
 watch(monthlyData, (newData) => {
   formatMonData(newData)
-  console.log(monthlyEmoData.value)
 })
+
 
 </script>
 <template>
-  <Line class="border	rounded-2xl" :data="data" :options="options" />
+  <Line ref="lineChart" class="border	rounded-2xl" :data="data" :options="options" />
 </template>
 
 <style scoped></style>

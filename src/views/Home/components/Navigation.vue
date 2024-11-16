@@ -27,8 +27,6 @@ watch(() => route.name, (value) => {
     <van-tabbar-item @click="toPath('analysis')" icon="bar-chart-o"></van-tabbar-item>
     <van-tabbar-item icon="wap-nav"></van-tabbar-item>
   </van-tabbar>
-
-
 </template>
 
 <style scoped>

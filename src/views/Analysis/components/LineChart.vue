@@ -134,11 +134,16 @@ const valueOfEmotions = {
 
 const formatMonData = (newData) => {
   monthlyEmoData.value = []
-  newData.forEach(data => {
-    if (data.emotion) {
-      monthlyEmoData.value.push({ x: data.indexDate, y: valueOfEmotions[data.emotion] })
-    }
-  })
+  if(newData){
+      newData.forEach(data => {
+      if (data.emotion) {
+        monthlyEmoData.value.push({ x: data.indexDate, y: valueOfEmotions[data.emotion] })
+      }
+    })
+  }else {
+    return
+  }
+
 }
 
 
@@ -149,7 +154,10 @@ watch(monthlyData, (newData) => {
 
 </script>
 <template>
-  <Line ref="lineChart" class="border	rounded-2xl" :data="data" :options="options" />
+  <div class="border	rounded-2xl bg-white">
+    <p class="pt-3 pl-3">心情流</p>
+    <Line ref="lineChart"  :data="data" :options="options" />
+  </div>
 </template>
 
 <style scoped></style>

@@ -1,5 +1,5 @@
 <script setup name="Calendar">
-import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlayIcon } from '@heroicons/vue/20/solid'
+import {  PlayIcon } from '@heroicons/vue/20/solid'
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';

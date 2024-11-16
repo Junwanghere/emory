@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, inject, toRefs } from 'vue'
+import { ref, computed, watch, toRefs } from 'vue'
 
 
 
@@ -36,12 +36,14 @@ const emotionData = ref([
   }
 ])
 
-
+const resetEmotionPercentage = () => {
+  emotionData.value.forEach(item => item.percentage = 0)
+}
 
 
 const getEmotionPercentage = (newData) => {
+  resetEmotionPercentage()
   const emotionMap = new Map()
-  console.log(newData)
   if (newData) {
     let emotionCount = 0
     newData.forEach(data => {
@@ -76,6 +78,12 @@ const getEmotionPercentage = (newData) => {
   }
 }
 
+const hasData = computed(() => {
+  return !emotionData.value.some((data) => {
+    return data.percentage > 0
+  })
+})
+
 const props = defineProps({ 
   monthlyData: {
     type: Array,
@@ -91,12 +99,13 @@ watch(monthlyData, (newData) => {
 
 </script>
 <template>
-  <div class="container w-fill p-5 ">
-    <p>心情分佈</p>
+  <div class="container w-fill p-5 border	rounded-2xl bg-white">
+    <p class="mb-7">心情分佈</p>
+    <p class="text-center text-sm mb-6 text-gray-400" v-if="hasData">還沒有紀錄...</p>
     <div class="emotion-container flex gap-7">
-      <div class="emotion-card flex-1" v-for="item in emotionData">
+      <div class="emotion-card flex-1" v-for="item in emotionData" :key="item.emotion">
         <div class="emotion-container">
-          <img class="aspect-square" :src="item.activeImg" alt="">
+          <img class="aspect-square" :src="item.percentage ? item.activeImg : item.inActiveImg" alt="">
         </div>
         <p :class="{ 'valid-percentage': item.percentage }"
           class="percentage-text text-center mt-3 bg-gray-200 rounded-2xl">{{ `${item.percentage.toFixed()}%` }}</p>

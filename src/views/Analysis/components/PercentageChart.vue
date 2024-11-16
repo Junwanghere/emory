@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, inject } from 'vue'
+import { ref, onMounted, watch, inject, toRefs } from 'vue'
 
 
 
@@ -38,13 +38,13 @@ const emotionData = ref([
 
 
 
-const monthlyData = inject('monthlyData')
 
-const getEmotionPercentage = () => {
+const getEmotionPercentage = (newData) => {
   const emotionMap = new Map()
-  if (monthlyData.value) {
+  console.log(newData)
+  if (newData) {
     let emotionCount = 0
-    monthlyData.value.forEach(data => {
+    newData.forEach(data => {
       if (data.emotion) {
         emotionCount++
         if (emotionMap.has(data.emotion)) {
@@ -76,8 +76,17 @@ const getEmotionPercentage = () => {
   }
 }
 
-watch(monthlyData, () => {
-  getEmotionPercentage()
+const props = defineProps({ 
+  monthlyData: {
+    type: Array,
+    default: ref([])
+  }
+})
+
+const { monthlyData } = toRefs(props)
+
+watch(monthlyData, (newData) => {
+  getEmotionPercentage(newData)
 }, { immediate: true })
 
 </script>

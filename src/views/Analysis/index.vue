@@ -23,7 +23,6 @@ const endDate = computed(() => {
 
 const getMonthlyData = async () => {
   const uid = userStore.user.uid
-  
   const data = await calendarGetEmotionsAPI(uid, startDate.value, endDate.value)
   monthlyData.value = data
 }
@@ -36,6 +35,6 @@ provide('monthlyData', monthlyData)
 </script>
 <template>
   <LineChart :startDate="startDate" :endDate="endDate" :monthlyData="monthlyData" />
-  <PercentageChart />
+  <PercentageChart :monthlyData="monthlyData" />
 </template>
 <style></style>

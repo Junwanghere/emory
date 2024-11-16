@@ -156,7 +156,7 @@ const userSignOut = () => {
 </script>
 
 <template>
-  <div class="calendar-container p-1">
+  <div class="calendar-container p-3 bg-blue-50">
     <div class="header">
       <span @click="userSignOut" class="absolute top-3 right-5">登出</span>
       <div class="year-section" @click="showDatePicker = !showDatePicker">

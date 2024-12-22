@@ -40,6 +40,8 @@ const onSignIn = async () => {
     router.push({
       name: 'home'
     })
+    
+
     showSuccessToast('登入成功！');
     resetInfo()
   } else {

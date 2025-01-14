@@ -278,7 +278,11 @@ const setEmotion = (emotion) => {
         size="large"
       />
     </van-cell-group>
-    <van-tabbar :border="true" :safe-area-inset-bottom="true" :fixed="true">
+    <van-tabbar
+      class="max-w-[480px] mx-auto"
+      :border="true"
+      :safe-area-inset-bottom="true"
+    >
       <van-tabbar-item
         @click="changeDay(-1)"
         name="left-arrow"
@@ -309,6 +313,10 @@ const setEmotion = (emotion) => {
 </template>
 
 <style scoped>
+.van-tabbar--fixed {
+  left: unset;
+}
+
 .section {
   margin-bottom: 53px;
 }
@@ -320,13 +328,10 @@ const setEmotion = (emotion) => {
 }
 
 .btn-container {
-  position: absolute;
   display: flex;
-  width: 90%;
-  margin: 0 auto;
   justify-content: end;
-  right: 5%;
-  top: 3%;
+  width: 90%;
+  margin: 0.5rem auto;
 }
 
 .ellipsis-btn {
@@ -353,7 +358,6 @@ const setEmotion = (emotion) => {
 .img-container {
   width: 90%;
   margin: 0 auto;
-  margin-top: 3.5rem;
   aspect-ratio: 1 / 1;
   border-radius: 1rem;
   overflow: hidden;

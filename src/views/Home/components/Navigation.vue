@@ -25,7 +25,11 @@ watch(
 </script>
 
 <template>
-  <van-tabbar v-model="active" class="max-w-[480px] mx-auto">
+  <van-tabbar
+    :safe-area-inset-bottom="true"
+    v-model="active"
+    class="max-w-[480px] mx-auto"
+  >
     <van-tabbar-item
       @click="toPath('calendar')"
       icon="smile-o"

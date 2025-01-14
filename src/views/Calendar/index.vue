@@ -58,7 +58,10 @@ const getMonthlyData = async () => {
         return item.date == day.fullDate;
       });
       if (item.emotion) {
-        matchDay.emotion = `/src/assets/emotions/${item.emotion}.png`;
+        matchDay.emotion = new URL(
+          `/src/assets/emotions/${item.emotion}.png`,
+          import.meta.url,
+        ).href;
       }
     });
   } else {
@@ -199,17 +202,12 @@ const userSignOut = () => {
         />
       </div>
     </div>
+
     <div class="days-container">
       <span v-for="item in weekday" :key="item.id" class="weekday">{{
         item
       }}</span>
-      <van-loading v-if="isLoading" />
-      <div
-        v-else
-        v-for="item in dayList"
-        class="day-container"
-        :key="item.fullDate"
-      >
+      <div v-for="item in dayList" class="day-container" :key="item.fullDate">
         <div v-if="!item.day"></div>
         <div v-else class="icon" @click="openPost(item)">
           <img v-if="item.emotion" :src="item.emotion" alt="" />

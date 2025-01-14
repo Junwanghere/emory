@@ -182,32 +182,51 @@ const emotionsData = [
   {
     emotion: "veryhappy",
     alt: "VerryHappyIcon",
-    activeImgUrl: "/src/assets/emotions/veryhappy.png",
-    notActiveImgUrl: "/src/assets/emotions/notchosenveryhappy.png",
+    activeImgUrl: new URL("/src/assets/emotions/veryhappy.png", import.meta.url)
+      .href,
+    notActiveImgUrl: new URL(
+      "/src/assets/emotions/notchosenveryhappy.png",
+      import.meta.url,
+    ).href,
   },
   {
     emotion: "happy",
     alt: "HappyIcon",
-    activeImgUrl: "/src/assets/emotions/happy.png",
-    notActiveImgUrl: "/src/assets/emotions/notchosenhappy.png",
+    activeImgUrl: new URL("/src/assets/emotions/happy.png", import.meta.url)
+      .href,
+    notActiveImgUrl: new URL(
+      "/src/assets/emotions/notchosenhappy.png",
+      import.meta.url,
+    ).href,
   },
   {
     emotion: "neutral",
     alt: "NeutralIcon",
-    activeImgUrl: "/src/assets/emotions/neutral.png",
-    notActiveImgUrl: "/src/assets/emotions/notchosenneutral.png",
+    activeImgUrl: new URL("/src/assets/emotions/neutral.png", import.meta.url)
+      .href,
+    notActiveImgUrl: new URL(
+      "/src/assets/emotions/notchosenneutral.png",
+      import.meta.url,
+    ).href,
   },
   {
     emotion: "sad",
     alt: "SadIcon",
-    activeImgUrl: "/src/assets/emotions/sad.png",
-    notActiveImgUrl: "/src/assets/emotions/notchosensad.png",
+    activeImgUrl: new URL("/src/assets/emotions/sad.png", import.meta.url).href,
+    notActiveImgUrl: new URL(
+      "/src/assets/emotions/notchosensad.png",
+      import.meta.url,
+    ).href,
   },
   {
     emotion: "verysad",
     alt: "VerySadIcon",
-    activeImgUrl: "/src/assets/emotions/verysad.png",
-    notActiveImgUrl: "/src/assets/emotions/notchosenverysad.png",
+    activeImgUrl: new URL("/src/assets/emotions/verysad.png", import.meta.url)
+      .href,
+    notActiveImgUrl: new URL(
+      "/src/assets/emotions/notchosenverysad.png",
+      import.meta.url,
+    ).href,
   },
 ];
 

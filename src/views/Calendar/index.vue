@@ -176,7 +176,9 @@ const userSignOut = () => {
 <template>
   <div class="calendar-container p-3 bg-blue-50">
     <div class="header">
-      <span @click="userSignOut" class="absolute top-3 right-5">登出</span>
+      <span @click="userSignOut" class="absolute top-3 right-5 cursor-pointer"
+        >登出</span
+      >
       <div class="year-section" @click="showDatePicker = !showDatePicker">
         <span class="year">{{ selectedYear }}</span>
         <PlayIcon

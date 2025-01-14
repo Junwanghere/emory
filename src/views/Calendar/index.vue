@@ -9,7 +9,8 @@ import { useUserStore } from "@/stores/user";
 import { logOutAPI } from "@/apis/auth";
 import { calendarGetEmotionsAPI } from "@/apis/calendar";
 import { showToast, showConfirmDialog } from "vant";
-
+import "vant/es/toast/style";
+import "vant/es/dialog/style";
 const {
   selectedYear,
   setMonth,

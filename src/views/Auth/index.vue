@@ -6,7 +6,8 @@ import {
   signInWithPopupAPI,
 } from "@/apis/auth.js";
 import { useRoute, useRouter } from "vue-router";
-import { showSuccessToast, showToast, showFailToast } from "vant";
+import { showSuccessToast, showFailToast, showToast } from "vant";
+import "vant/es/toast/style";
 
 const route = useRoute();
 const router = useRouter();

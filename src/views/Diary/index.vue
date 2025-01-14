@@ -13,6 +13,7 @@ import {
 } from "@/apis/diary.js";
 import { useUserStore } from "@/stores/user";
 import { showLoadingToast } from "vant";
+import "vant/es/toast/style";
 
 const { selectedYear, selectedMonth, selectedDay, selectedWeekday } =
   toRefs(useDateStore());

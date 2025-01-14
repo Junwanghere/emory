@@ -70,11 +70,13 @@ onMounted(async () => {
   await getMonthlyData();
 });
 
+const isLoading = ref(false);
 // 根據該年該月生成日立
 let dayList = ref([]);
 watch(
   [selectedYear, selectedMonth],
   async () => {
+    isLoading.value = true;
     const firstDayOfMonth = dayjs(
       `${selectedYear.value}-${selectedMonth.value}`,
     ).format("d");
@@ -101,6 +103,7 @@ watch(
       });
     }
     await getMonthlyData();
+    isLoading.value = false;
   },
   { immediate: true },
 );
@@ -198,7 +201,13 @@ const userSignOut = () => {
       <span v-for="item in weekday" :key="item.id" class="weekday">{{
         item
       }}</span>
-      <div v-for="item in dayList" class="day-container" :key="item.fullDate">
+      <van-loading v-if="isLoading" />
+      <div
+        v-else
+        v-for="item in dayList"
+        class="day-container"
+        :key="item.fullDate"
+      >
         <div v-if="!item.day"></div>
         <div v-else class="icon" @click="openPost(item)">
           <img v-if="item.emotion" :src="item.emotion" alt="" />
@@ -273,6 +282,7 @@ const userSignOut = () => {
 .calendar-container {
   width: 100%;
   height: 100vh;
+  overflow: hidden;
 }
 
 .icon {

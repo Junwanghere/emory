@@ -183,7 +183,7 @@ const userSignOut = () => {
         >登出</span
       >
       <div class="year-section" @click="showDatePicker = !showDatePicker">
-        <span class="year">{{ selectedYear }}</span>
+        <span class="year cursor-pointer">{{ selectedYear }}</span>
         <PlayIcon
           class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90"
         />
@@ -193,7 +193,7 @@ const userSignOut = () => {
           @click="setMonth(-1)"
           class="ml-2 hover:cursor-pointer size-4 font-bold rotate-180"
         />
-        <span class="month" @click="showDatePicker = true">{{
+        <span class="month cursor-pointer" @click="showDatePicker = true">{{
           numberToMonth
         }}</span>
         <PlayIcon
@@ -202,14 +202,19 @@ const userSignOut = () => {
         />
       </div>
     </div>
-
-    <div class="days-container">
+    <div class="weekday-container flex w-full my-4">
       <span v-for="item in weekday" :key="item.id" class="weekday">{{
         item
       }}</span>
-      <div v-for="item in dayList" class="day-container" :key="item.fullDate">
+    </div>
+    <div class="days-container">
+      <div
+        v-for="item in dayList"
+        class="day-container pb-2"
+        :key="item.fullDate"
+      >
         <div v-if="!item.day"></div>
-        <div v-else class="icon" @click="openPost(item)">
+        <div v-else class="icon cursor-pointer" @click="openPost(item)">
           <img v-if="item.emotion" :src="item.emotion" alt="" />
           <img v-else src="@/assets/emotions/notchosenneutral.png" alt="" />
         </div>
@@ -221,7 +226,8 @@ const userSignOut = () => {
     <van-popup
       v-model:show="showDatePicker"
       position="bottom"
-      :style="{ height: '50%' }"
+      :style="{ height: '35%' }"
+      class="max-w-[480px] mx-auto"
       round
     >
       <van-date-picker
@@ -260,10 +266,9 @@ const userSignOut = () => {
 
 .days-container {
   width: 100%;
-  height: 100dvh;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
   align-items: center;
 }
 
@@ -272,7 +277,6 @@ const userSignOut = () => {
   height: 100%;
   text-align: center;
   justify-self: end;
-  padding-bottom: 0.2rem;
 }
 
 .date {
@@ -281,6 +285,7 @@ const userSignOut = () => {
 
 .calendar-container {
   width: 100%;
+  height: 100dvh;
 }
 
 .icon {
@@ -322,5 +327,9 @@ const userSignOut = () => {
   background-color: gray;
   padding: 0 0.35rem;
   border-radius: 1rem;
+}
+
+.van-popup--bottom {
+  left: unset;
 }
 </style>

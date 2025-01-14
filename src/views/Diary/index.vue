@@ -1,176 +1,218 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
-import { useDateStore } from '@/stores/date';
-import { toRefs } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import dayjs from 'dayjs';
-import { diaryUploadImgAPI, diaryPostNewDiaryAPI, diaryGetDiaryAPI, diaryDelDiaryAPI, diaryDelImgAPI } from '@/apis/diary.js'
-import { useUserStore } from '@/stores/user';
+import { onMounted, reactive, ref, watch } from "vue";
+import { useDateStore } from "@/stores/date";
+import { toRefs } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import dayjs from "dayjs";
+import {
+  diaryUploadImgAPI,
+  diaryPostNewDiaryAPI,
+  diaryGetDiaryAPI,
+  diaryDelDiaryAPI,
+  diaryDelImgAPI,
+} from "@/apis/diary.js";
+import { useUserStore } from "@/stores/user";
+import { showLoadingToast } from "vant";
 
+const { selectedYear, selectedMonth, selectedDay, selectedWeekday } =
+  toRefs(useDateStore());
+const dateStore = useDateStore();
+const router = useRouter();
+const route = useRoute();
+const userStore = useUserStore();
 
-const { selectedYear, selectedMonth, selectedDay, selectedWeekday } = toRefs(useDateStore())
-const dateStore = useDateStore()
-const router = useRouter()
-const route = useRoute()
-const userStore = useUserStore()
-
-const diaryEmotion = ref('')
+const diaryEmotion = ref("");
 const resetDiary = () => {
-  diaryImg.value = ''
-  diaryContent.value = ''
-  diaryEmotion.value = ''
-}
+  diaryImg.value = "";
+  diaryContent.value = "";
+  diaryEmotion.value = "";
+};
 
 let compareData = reactive({
-  date: '',
-  imgUrl: '',
-  postContent: '',
-  emotion: ''
-})
+  date: "",
+  imgUrl: "",
+  postContent: "",
+  emotion: "",
+});
 
 const resetCompareData = () => {
   const emptyData = {
-    date: '',
-    imgUrl: '',
-    postContent: '',
-    emotion: ''
-  }
-  Object.assign(compareData, emptyData)
-}
+    date: "",
+    imgUrl: "",
+    postContent: "",
+    emotion: "",
+  };
+  Object.assign(compareData, emptyData);
+};
 
-const getDiaryData = async (fullDate) => {
-  resetCompareData()
+const getDiaryData = async () => {
+  resetCompareData();
 
-  const uid = userStore.user.uid
-  const period = `${selectedYear.value}年${selectedMonth.value}月`
-  const response = await diaryGetDiaryAPI(uid, dateStore.indexDate)
+  const uid = userStore.user.uid;
+  const response = await diaryGetDiaryAPI(uid, dateStore.indexDate);
   if (response) {
-    Object.assign(compareData, response)
-    diaryImg.value = response.imgUrl
-    diaryContent.value = response.postContent
-    diaryEmotion.value = response.emotion
+    Object.assign(compareData, response);
+    diaryImg.value = response.imgUrl;
+    diaryContent.value = response.postContent;
+    diaryEmotion.value = response.emotion;
   }
-}
-
-
+};
 
 onMounted(async () => {
-  const { fullDate } = route.query
-  await getDiaryData(fullDate)
-})
+  const { fullDate } = route.query;
+  await getDiaryData(fullDate);
+});
 
-
-
-const diaryContent = ref('')
+const diaryContent = ref("");
 // 用戶上傳照片
 const afterRead = async (file) => {
   const toast = showLoadingToast({
-    message: '上傳中',
+    message: "上傳中",
     forbidClick: true,
-    loadingType: 'spinner',
+    loadingType: "spinner",
   });
-  diaryImg.value = await diaryUploadImgAPI(file, userStore.user.uid, dateStore.selectedFullDate)
-  toast.close()
-}
+  diaryImg.value = await diaryUploadImgAPI(
+    file,
+    userStore.user.uid,
+    dateStore.selectedFullDate,
+  );
+  toast.close();
+};
 
-const diaryImg = ref('')
+const diaryImg = ref("");
 
 const postDiary = async () => {
   // 進行一次資料校驗以避免重複請求
-  if (compareData.imgUrl == diaryImg.value && compareData.postContent == diaryContent.value && compareData.emotion == diaryEmotion.value) {
-    return
-  // 如果已經刪除就不再發請求
-  }else if(!diaryContent.value && !diaryEmotion.value && !diaryImg.value){
-    return
+  if (
+    compareData.imgUrl == diaryImg.value &&
+    compareData.postContent == diaryContent.value &&
+    compareData.emotion == diaryEmotion.value
+  ) {
+    return;
+    // 如果已經刪除就不再發請求
+  } else if (!diaryContent.value && !diaryEmotion.value && !diaryImg.value) {
+    return;
   } else {
-    const uid = userStore.user.uid
-    const period = `${selectedYear.value}年${selectedMonth.value}月`
-    await diaryPostNewDiaryAPI(uid, dateStore.selectedFullDate, diaryImg.value, diaryContent.value, diaryEmotion.value, dateStore.indexDate)
+    const uid = userStore.user.uid;
+    await diaryPostNewDiaryAPI(
+      uid,
+      dateStore.selectedFullDate,
+      diaryImg.value,
+      diaryContent.value,
+      diaryEmotion.value,
+      dateStore.indexDate,
+    );
   }
-}
+};
 
 const closePopup = async () => {
-  await postDiary()
-  resetDiary()
-  resetCompareData()
-  router.push('/home')
-}
+  await postDiary();
+  resetDiary();
+  resetCompareData();
+  router.push("/home");
+};
 
 const delDiary = async () => {
   // 如果都是空的話就不做刪除動作
   if (!diaryContent.value && !diaryImg.value && !diaryEmotion.value) {
-    return
+    return;
   }
-  const uid = userStore.user.uid
+  const uid = userStore.user.uid;
   // 有內容才刪
-  if(diaryContent.value || diaryEmotion.value ){
-    const period = `${selectedYear.value}年${selectedMonth.value}月`
-    await diaryDelDiaryAPI(uid, dateStore.indexDate)
+  if (diaryContent.value || diaryEmotion.value) {
+    await diaryDelDiaryAPI(uid, dateStore.indexDate);
     // 刪除成功提示
   }
-  if(diaryImg.value){
-    await diaryDelImgAPI(uid, dateStore.indexDate)
+  if (diaryImg.value) {
+    await diaryDelImgAPI(uid, dateStore.indexDate);
   }
-  resetDiary()
-}
+  resetDiary();
+};
 
 const changeDay = async (value) => {
   // 點選換天時，改變路由，改使用者選擇日期的數據
-  await postDiary()
-  let newDay = dayjs(`${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`).add(value, 'day').format('YYYY-M-D-dddd')
-  newDay = newDay.split('-')
-  selectedYear.value = +newDay[0]
-  selectedMonth.value = +newDay[1]
-  selectedDay.value = +newDay[2]
-  selectedWeekday.value = newDay[3]
+  await postDiary();
+  let newDay = dayjs(
+    `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`,
+  )
+    .add(value, "day")
+    .format("YYYY-M-D-dddd");
+  newDay = newDay.split("-");
+  selectedYear.value = +newDay[0];
+  selectedMonth.value = +newDay[1];
+  selectedDay.value = +newDay[2];
+  selectedWeekday.value = newDay[3];
 
   router.push({
-    name: 'diary',
+    name: "diary",
     query: {
-      fullDate: dateStore.selectedFullDate
-    }
-  })
-}
+      fullDate: dateStore.selectedFullDate,
+    },
+  });
+};
 
-watch(() => route.query.fullDate, async () => {
-  resetDiary()
-  const { fullDate } = route.query
-  await getDiaryData(fullDate)
-})
+watch(
+  () => route.query.fullDate,
+  async () => {
+    resetDiary();
+    const { fullDate } = route.query;
+    await getDiaryData(fullDate);
+  },
+);
 
-const showAction = ref(false)
-const actions = [
-  { name: '刪除', color: '#ee0a24' },
-];
+const showAction = ref(false);
+const actions = [{ name: "刪除", color: "#ee0a24" }];
 
 const showOptions = () => {
-  showAction.value = true
-}
+  showAction.value = true;
+};
 
 const onCancel = () => {
-  showAction.value = false
-}
-
-
+  showAction.value = false;
+};
 
 const onSelect = async (item) => {
-  if (item.name == '刪除') {
-    await delDiary()
+  if (item.name == "刪除") {
+    await delDiary();
   }
-}
+};
 
-const emotionsData= [
-  {emotion: 'veryhappy', alt: "VerryHappyIcon", activeImgUrl: '/src/assets/emotions/veryhappy.png', notActiveImgUrl: '/src/assets/emotions/notchosenveryhappy.png'},
-  {emotion: 'happy', alt: "HappyIcon", activeImgUrl: '/src/assets/emotions/happy.png', notActiveImgUrl: '/src/assets/emotions/notchosenhappy.png'},
-  {emotion: 'neutral', alt: "NeutralIcon", activeImgUrl: '/src/assets/emotions/neutral.png', notActiveImgUrl: '/src/assets/emotions/notchosenneutral.png'},
-  {emotion: 'sad', alt: "SadIcon", activeImgUrl: '/src/assets/emotions/sad.png', notActiveImgUrl: '/src/assets/emotions/notchosensad.png'},
-  {emotion: 'verysad', alt: "VerySadIcon", activeImgUrl: '/src/assets/emotions/verysad.png', notActiveImgUrl: '/src/assets/emotions/notchosenverysad.png'}
-]
+const emotionsData = [
+  {
+    emotion: "veryhappy",
+    alt: "VerryHappyIcon",
+    activeImgUrl: "/src/assets/emotions/veryhappy.png",
+    notActiveImgUrl: "/src/assets/emotions/notchosenveryhappy.png",
+  },
+  {
+    emotion: "happy",
+    alt: "HappyIcon",
+    activeImgUrl: "/src/assets/emotions/happy.png",
+    notActiveImgUrl: "/src/assets/emotions/notchosenhappy.png",
+  },
+  {
+    emotion: "neutral",
+    alt: "NeutralIcon",
+    activeImgUrl: "/src/assets/emotions/neutral.png",
+    notActiveImgUrl: "/src/assets/emotions/notchosenneutral.png",
+  },
+  {
+    emotion: "sad",
+    alt: "SadIcon",
+    activeImgUrl: "/src/assets/emotions/sad.png",
+    notActiveImgUrl: "/src/assets/emotions/notchosensad.png",
+  },
+  {
+    emotion: "verysad",
+    alt: "VerySadIcon",
+    activeImgUrl: "/src/assets/emotions/verysad.png",
+    notActiveImgUrl: "/src/assets/emotions/notchosenverysad.png",
+  },
+];
 
 const setEmotion = (emotion) => {
-  diaryEmotion.value = emotion
-}
-
+  diaryEmotion.value = emotion;
+};
 </script>
 
 <template>
@@ -184,7 +226,13 @@ const setEmotion = (emotion) => {
       </div>
     </div>
     <div class="img-container">
-      <van-image width="100%" fit="cover" height="100%" :src="diaryImg" v-if="diaryImg">
+      <van-image
+        width="100%"
+        fit="cover"
+        height="100%"
+        :src="diaryImg"
+        v-if="diaryImg"
+      >
         <template v-slot:loading>
           <van-loading type="spinner" size="20" />
         </template>
@@ -192,20 +240,49 @@ const setEmotion = (emotion) => {
     </div>
     <div class="emotion-section">
       <p class="emotion-sec-text">今天過得怎麼樣？</p>
-      <div class="emotion-container" >
-        <div @click="setEmotion(emotion.emotion)" class="emotion-img-container" v-for="emotion in emotionsData">
-          <img  v-if="diaryEmotion != emotion.emotion" class="emotion-img" :src="!diaryEmotion ? emotion.activeImgUrl : emotion.notActiveImgUrl" alt="emotion.alt">
-          <img  v-else class="emotion-img" :src="emotion.activeImgUrl" alt="emotion.alt">
+      <div class="emotion-container">
+        <div
+          @click="setEmotion(emotion.emotion)"
+          class="emotion-img-container"
+          v-for="emotion in emotionsData"
+          :key="emotion.emotion"
+        >
+          <img
+            v-if="diaryEmotion != emotion.emotion"
+            class="emotion-img"
+            :src="
+              !diaryEmotion ? emotion.activeImgUrl : emotion.notActiveImgUrl
+            "
+            alt="emotion.alt"
+          />
+          <img
+            v-else
+            class="emotion-img"
+            :src="emotion.activeImgUrl"
+            alt="emotion.alt"
+          />
         </div>
       </div>
     </div>
     <van-cell-group inset class="field-container">
-      <van-field class="input-field" v-model="diaryContent" rows="2" autosize
-        :label="dateStore.selectedFullDate" type="textarea"
-        placeholder="今天過得如何呢？" label-align="top" size="large" />
+      <van-field
+        class="input-field"
+        v-model="diaryContent"
+        rows="2"
+        autosize
+        :label="dateStore.selectedFullDate"
+        type="textarea"
+        placeholder="今天過得如何呢？"
+        label-align="top"
+        size="large"
+      />
     </van-cell-group>
     <van-tabbar :border="true" :safe-area-inset-bottom="true" :fixed="true">
-      <van-tabbar-item @click="changeDay(-1)" name="left-arrow" icon="arrow-left"></van-tabbar-item>
+      <van-tabbar-item
+        @click="changeDay(-1)"
+        name="left-arrow"
+        icon="arrow-left"
+      ></van-tabbar-item>
       <van-tabbar-item>
         <template #icon>
           <van-uploader :after-read="afterRead" accept=".jpg,.jpeg,.png">
@@ -213,10 +290,20 @@ const setEmotion = (emotion) => {
           </van-uploader>
         </template>
       </van-tabbar-item>
-      <van-tabbar-item @click=changeDay(1) name="right-arrow" icon="arrow"></van-tabbar-item>
+      <van-tabbar-item
+        @click="changeDay(1)"
+        name="right-arrow"
+        icon="arrow"
+      ></van-tabbar-item>
     </van-tabbar>
-    <van-action-sheet @select="onSelect" v-model:show="showAction" @cancel="onCancel" :actions="actions"
-      cancel-text="取消" close-on-click-action />
+    <van-action-sheet
+      @select="onSelect"
+      v-model:show="showAction"
+      @cancel="onCancel"
+      :actions="actions"
+      cancel-text="取消"
+      close-on-click-action
+    />
   </div>
 </template>
 
@@ -240,7 +327,6 @@ const setEmotion = (emotion) => {
   right: 5%;
   top: 3%;
 }
-
 
 .ellipsis-btn {
   background-color: #e0e0e0;
@@ -321,8 +407,6 @@ const setEmotion = (emotion) => {
   transition: transform 0.15s;
   position: relative;
 }
-
-
 
 .emotion-img-container:active {
   transform: scale(120%);

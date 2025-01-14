@@ -221,7 +221,7 @@ const userSignOut = () => {
     <van-popup
       v-model:show="showDatePicker"
       position="bottom"
-      :style="{ height: '35%' }"
+      :style="{ height: '50%' }"
       round
     >
       <van-date-picker
@@ -248,7 +248,6 @@ const userSignOut = () => {
   width: 100%;
   justify-content: center;
   align-items: center;
-  height: 10%;
 }
 
 .weekday {
@@ -263,8 +262,7 @@ const userSignOut = () => {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(8, 1fr);
-  height: 100%;
+  grid-template-rows: repeat(7, 1fr);
   align-items: center;
 }
 
@@ -273,6 +271,7 @@ const userSignOut = () => {
   height: 100%;
   text-align: center;
   justify-self: end;
+  padding-bottom: 0.2rem;
 }
 
 .date {
@@ -281,8 +280,6 @@ const userSignOut = () => {
 
 .calendar-container {
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
 }
 
 .icon {

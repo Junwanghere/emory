@@ -39,9 +39,7 @@ const daysInMonth = computed(() => {
 
 // 轉換月份格式
 const numberToMonth = computed(() => {
-  return dayjs()
-    .month(selectedMonth.value - 1)
-    .format("MMMM");
+  return selectedMonth.value;
 });
 
 // 獲取該月資料並且渲染dayList

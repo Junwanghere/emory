@@ -8,7 +8,7 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { logOutAPI } from "@/apis/auth";
 import { calendarGetEmotionsAPI } from "@/apis/calendar";
-import { showToast, showConfirmDialog } from "vant";
+import { showToast, showConfirmDialog, showFailToast } from "vant";
 import "vant/es/toast/style";
 import "vant/es/dialog/style";
 const {
@@ -44,28 +44,32 @@ const numberToMonth = computed(() => {
 
 // 獲取該月資料並且渲染dayList
 const getMonthlyData = async () => {
-  const uid = userStore.user.uid;
-  const startDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`)
-    .startOf("M")
-    .format("YYYY-MM-DD");
-  const endDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`)
-    .endOf("M")
-    .format("YYYY-MM-DD");
-  const monthlyData = await calendarGetEmotionsAPI(uid, startDate, endDate);
-  if (monthlyData) {
-    monthlyData.forEach((item) => {
-      const matchDay = dayList.value.find((day) => {
-        return item.date == day.fullDate;
+  try {
+    const uid = userStore.user.uid;
+    const startDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`)
+      .startOf("M")
+      .format("YYYY-MM-DD");
+    const endDate = dayjs(`${selectedYear.value}-${selectedMonth.value}`)
+      .endOf("M")
+      .format("YYYY-MM-DD");
+    const monthlyData = await calendarGetEmotionsAPI(uid, startDate, endDate);
+    if (monthlyData) {
+      monthlyData.forEach((item) => {
+        const matchDay = dayList.value.find((day) => {
+          return item.date == day.fullDate;
+        });
+        if (item.emotion) {
+          matchDay.emotion = new URL(
+            `/src/assets/emotions/${item.emotion}.png`,
+            import.meta.url,
+          ).href;
+        }
       });
-      if (item.emotion) {
-        matchDay.emotion = new URL(
-          `/src/assets/emotions/${item.emotion}.png`,
-          import.meta.url,
-        ).href;
-      }
-    });
-  } else {
-    return;
+    } else {
+      return;
+    }
+  } catch {
+    showFailToast("獲取資料失敗");
   }
 };
 

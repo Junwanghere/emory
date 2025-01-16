@@ -12,7 +12,7 @@ import {
   diaryDelImgAPI,
 } from "@/apis/diary.js";
 import { useUserStore } from "@/stores/user";
-import { showLoadingToast } from "vant";
+import { showFailToast, showLoadingToast } from "vant";
 import "vant/es/toast/style";
 
 const { selectedYear, selectedMonth, selectedDay, selectedWeekday } =
@@ -47,15 +47,18 @@ const resetCompareData = () => {
 };
 
 const getDiaryData = async () => {
-  resetCompareData();
-
-  const uid = userStore.user.uid;
-  const response = await diaryGetDiaryAPI(uid, dateStore.indexDate);
-  if (response) {
-    Object.assign(compareData, response);
-    diaryImg.value = response.imgUrl;
-    diaryContent.value = response.postContent;
-    diaryEmotion.value = response.emotion;
+  try {
+    resetCompareData();
+    const uid = userStore.user.uid;
+    const response = await diaryGetDiaryAPI(uid, dateStore.indexDate);
+    if (response) {
+      Object.assign(compareData, response);
+      diaryImg.value = response.imgUrl;
+      diaryContent.value = response.postContent;
+      diaryEmotion.value = response.emotion;
+    }
+  } catch {
+    showLoadingToast("發生錯誤");
   }
 };
 
@@ -115,19 +118,23 @@ const closePopup = async () => {
 
 const delDiary = async () => {
   // 如果都是空的話就不做刪除動作
-  if (!diaryContent.value && !diaryImg.value && !diaryEmotion.value) {
-    return;
+  try {
+    if (!diaryContent.value && !diaryImg.value && !diaryEmotion.value) {
+      return;
+    }
+    const uid = userStore.user.uid;
+    // 有內容才刪
+    if (diaryContent.value || diaryEmotion.value) {
+      await diaryDelDiaryAPI(uid, dateStore.indexDate);
+      // 刪除成功提示
+    }
+    if (diaryImg.value) {
+      await diaryDelImgAPI(uid, dateStore.indexDate);
+    }
+    resetDiary();
+  } catch {
+    showFailToast("發生錯誤，請稍後再試");
   }
-  const uid = userStore.user.uid;
-  // 有內容才刪
-  if (diaryContent.value || diaryEmotion.value) {
-    await diaryDelDiaryAPI(uid, dateStore.indexDate);
-    // 刪除成功提示
-  }
-  if (diaryImg.value) {
-    await diaryDelImgAPI(uid, dateStore.indexDate);
-  }
-  resetDiary();
 };
 
 const changeDay = async (value) => {

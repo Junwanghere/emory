@@ -25,6 +25,7 @@ const onRegister = async () => {
     showSuccessToast("註冊成功！");
   } else if (result == "已註冊過") {
     showToast("該帳號已註冊過");
+    return;
   } else {
     showFailToast("註冊失敗");
     resetInfo();
@@ -38,30 +39,29 @@ const onRegister = async () => {
 };
 
 const onSignIn = async () => {
-  const res = await authLoginAPI(userEmail.value, password.value);
-  if (res) {
+  try {
+    await authLoginAPI(userEmail.value, password.value);
     router.push({
       name: "home",
     });
 
     showSuccessToast("登入成功！");
     resetInfo();
-  } else {
-    console.log("密碼錯誤/發生錯誤 ");
+  } catch {
+    showFailToast("登入失敗");
   }
 };
 
 const loginWithGoogle = async () => {
-  const res = await signInWithPopupAPI();
-  if (res) {
+  try {
+    await signInWithPopupAPI();
     resetInfo();
     router.push({
       name: "home",
     });
     showSuccessToast("登入成功！");
-  } else {
-    //沒有登入成功
-    console.log("沒有登入成功");
+  } catch {
+    showFailToast("登入失敗");
   }
 };
 

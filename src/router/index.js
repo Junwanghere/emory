@@ -77,7 +77,6 @@ router.beforeEach(async (to, from, next) => {
       next();
     }
   } catch (error) {
-    console.error("Auth error in router guard:", error);
     next("/auth/login");
   }
 });

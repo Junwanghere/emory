@@ -8,6 +8,7 @@ import { calendarGetEmotionsAPI } from "@/apis/calendar";
 import { useDateStore } from "@/stores/date";
 import { storeToRefs } from "pinia";
 import { PlayIcon } from "@heroicons/vue/20/solid";
+import { showFailToast } from "vant";
 
 const userStore = useUserStore();
 const dateStore = useDateStore();
@@ -26,13 +27,17 @@ const endDate = computed(() => {
 });
 
 const getMonthlyData = async () => {
-  const uid = userStore.user.uid;
-  const data = await calendarGetEmotionsAPI(
-    uid,
-    startDate.value,
-    endDate.value,
-  );
-  monthlyData.value = data;
+  try {
+    const uid = userStore.user.uid;
+    const data = await calendarGetEmotionsAPI(
+      uid,
+      startDate.value,
+      endDate.value,
+    );
+    monthlyData.value = data;
+  } catch {
+    showFailToast("獲取資料失敗");
+  }
 };
 
 getMonthlyData();

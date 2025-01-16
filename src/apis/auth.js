@@ -19,7 +19,7 @@ export const authRegisterAPI = async (email, password) => {
       case "auth/invalid-email":
         return "不是有效的email";
       default:
-        return "註冊發生錯誤";
+        return "註冊發生錯誤，請稍後再試";
     }
   }
 };

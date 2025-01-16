@@ -58,7 +58,7 @@ const getDiaryData = async () => {
       diaryEmotion.value = response.emotion;
     }
   } catch {
-    showLoadingToast("發生錯誤");
+    showFailToast("發生錯誤，請稍後再試");
   }
 };
 
@@ -75,12 +75,17 @@ const afterRead = async (file) => {
     forbidClick: true,
     loadingType: "spinner",
   });
-  diaryImg.value = await diaryUploadImgAPI(
-    file,
-    userStore.user.uid,
-    dateStore.selectedFullDate,
-  );
-  toast.close();
+  try {
+    diaryImg.value = await diaryUploadImgAPI(
+      file,
+      userStore.user.uid,
+      dateStore.selectedFullDate,
+    );
+  } catch {
+    showFailToast("發生錯誤，請稍後再試");
+  } finally {
+    toast.close();
+  }
 };
 
 const diaryImg = ref("");
@@ -97,15 +102,19 @@ const postDiary = async () => {
   } else if (!diaryContent.value && !diaryEmotion.value && !diaryImg.value) {
     return;
   } else {
-    const uid = userStore.user.uid;
-    await diaryPostNewDiaryAPI(
-      uid,
-      dateStore.selectedFullDate,
-      diaryImg.value,
-      diaryContent.value,
-      diaryEmotion.value,
-      dateStore.indexDate,
-    );
+    try {
+      const uid = userStore.user.uid;
+      await diaryPostNewDiaryAPI(
+        uid,
+        dateStore.selectedFullDate,
+        diaryImg.value,
+        diaryContent.value,
+        diaryEmotion.value,
+        dateStore.indexDate,
+      );
+    } catch {
+      showFailToast("發生錯誤，請稍後再試");
+    }
   }
 };
 
@@ -133,7 +142,7 @@ const delDiary = async () => {
     }
     resetDiary();
   } catch {
-    showFailToast("發生錯誤，請稍後再試");
+    showFailToast("發生錯誤，請稍後再試，請稍後再試");
   }
 };
 

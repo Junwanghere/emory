@@ -25,38 +25,30 @@ export const diaryPostNewDiaryAPI = async (
   emotion,
   indexDate,
 ) => {
-  try {
-    const diaryRef = doc(db, "users", `${uid}`, "diary", `${indexDate}`);
-    await setDoc(
-      diaryRef,
-      {
-        indexDate,
-        date,
-        imgUrl,
-        postContent,
-        emotion,
-      },
-      { merge: true },
-    );
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
+  const diaryRef = doc(db, "users", `${uid}`, "diary", `${indexDate}`);
+  await setDoc(
+    diaryRef,
+    {
+      indexDate,
+      date,
+      imgUrl,
+      postContent,
+      emotion,
+    },
+    { merge: true },
+  );
 };
 
 export const diaryUploadImgAPI = async (file, uid, date) => {
-  try {
-    // 取出file 實例
-    const fileData = file.file;
-    // 設定要儲存的地方以及名稱
-    const storageReference = storageRef(storage, `${uid}/images/${date}`);
-    // 圖片上傳到firebase  storage
-    const snapshot = await uploadBytes(storageReference, fileData);
+  // 取出file 實例
+  const fileData = file.file;
+  // 設定要儲存的地方以及名稱
+  const storageReference = storageRef(storage, `${uid}/images/${date}`);
+  // 圖片上傳到firebase  storage
+  const snapshot = await uploadBytes(storageReference, fileData);
 
-    const downloadURL = await getDownloadURL(snapshot.ref);
-    return downloadURL;
-  } catch (e) {
-    console.error("圖片上傳失敗：", e);
-  }
+  const downloadURL = await getDownloadURL(snapshot.ref);
+  return downloadURL;
 };
 
 export const diaryDelImgAPI = async (uid, date) => {

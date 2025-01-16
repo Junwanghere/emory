@@ -194,9 +194,9 @@ const userSignOut = () => {
           @click="setMonth(-1)"
           class="ml-2 hover:cursor-pointer size-4 font-bold rotate-180"
         />
-        <span class="month cursor-pointer" @click="showDatePicker = true">{{
-          numberToMonth
-        }}</span>
+        <span class="month cursor-pointer" @click="showDatePicker = true">
+          {{ numberToMonth }}
+        </span>
         <PlayIcon
           @click="setMonth(1)"
           class="ml-2 hover:cursor-pointer size-4 font-bold"

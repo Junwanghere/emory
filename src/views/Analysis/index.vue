@@ -60,7 +60,7 @@ watch([selectedYear, selectedMonth], () => {
 });
 </script>
 <template>
-  <div class="p-5 bg-blue-50 h-dvh">
+  <div class="p-5 bg-blue-50">
     <h3 class="text-center font-bold text-lg mb-1">分析</h3>
     <div
       class="justify-center flex items-center mb-5"

@@ -8,6 +8,6 @@ import { RouterView } from "vue-router";
 </template>
 <style>
 :root:root {
-  --van-base-font: "Noto Sans TC, sans-serif";
+  --van-base-font: "Noto Sans TC", sans-serif;
 }
 </style>

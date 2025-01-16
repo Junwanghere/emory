@@ -73,13 +73,11 @@ onMounted(async () => {
   await getMonthlyData();
 });
 
-const isLoading = ref(false);
 // 根據該年該月生成日立
 let dayList = ref([]);
 watch(
   [selectedYear, selectedMonth],
   async () => {
-    isLoading.value = true;
     const firstDayOfMonth = dayjs(
       `${selectedYear.value}-${selectedMonth.value}`,
     ).format("d");
@@ -106,7 +104,6 @@ watch(
       });
     }
     await getMonthlyData();
-    isLoading.value = false;
   },
   { immediate: true },
 );
@@ -210,7 +207,7 @@ const userSignOut = () => {
     <div class="days-container">
       <div
         v-for="item in dayList"
-        class="day-container pb-2"
+        class="day-container pb-2 flex flex-col items-center"
         :key="item.fullDate"
       >
         <div v-if="!item.day"></div>
@@ -275,8 +272,6 @@ const userSignOut = () => {
 .day-container {
   width: 100%;
   height: 100%;
-  text-align: center;
-  justify-self: end;
 }
 
 .date {

@@ -68,11 +68,11 @@ watch([selectedYear, selectedMonth], () => {
   <div class="p-5 bg-blue-50">
     <h3 class="text-center font-bold text-lg mb-1">分析</h3>
     <div
-      class="justify-center flex items-center mb-5"
+      class="justify-center flex items-center mb-5 cursor-pointer"
       @click="showDatePicker = !showDatePicker"
     >
       <span class="text-lg">{{ `${selectedYear}年${selectedMonth}月` }}</span>
-      <PlayIcon class="ml-2 hover:cursor-pointer size-4 font-bold rotate-90" />
+      <PlayIcon class="ml-2 size-4 font-bold rotate-90" />
     </div>
     <LineChart
       class="mb-5"
@@ -85,6 +85,7 @@ watch([selectedYear, selectedMonth], () => {
       v-model:show="showDatePicker"
       position="bottom"
       :style="{ height: '35%' }"
+      class="left-0 right-0 mx-auto max-w-[480px]"
       round
     >
       <van-date-picker

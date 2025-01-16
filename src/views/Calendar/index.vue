@@ -37,11 +37,6 @@ const daysInMonth = computed(() => {
   return dayjs(`${selectedYear.value}-${selectedMonth.value}`).daysInMonth();
 });
 
-// 轉換月份格式
-const numberToMonth = computed(() => {
-  return selectedMonth.value;
-});
-
 // 獲取該月資料並且渲染dayList
 const getMonthlyData = async () => {
   try {
@@ -195,7 +190,11 @@ const userSignOut = () => {
           class="ml-2 hover:cursor-pointer size-4 font-bold rotate-180"
         />
         <span class="month cursor-pointer" @click="showDatePicker = true">
-          {{ numberToMonth }}
+          {{
+            dayjs()
+              .month(selectedMonth - 1)
+              .format("MMMM")
+          }}
         </span>
         <PlayIcon
           @click="setMonth(1)"

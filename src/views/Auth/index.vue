@@ -133,7 +133,7 @@ watch(
 </script>
 <template>
   <div
-    class="container overflow-hidden pb-8 w-full relative h-screen flex items-center justify-center"
+    class="container overflow-hidden pb-8 w-full relative h-dvh flex items-center justify-center"
   >
     <van-form
       class="w-10/12"

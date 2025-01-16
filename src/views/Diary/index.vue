@@ -47,6 +47,16 @@ const resetCompareData = () => {
 };
 
 const getDiaryData = async () => {
+  const loadingToast = showLoadingToast({
+    message: "取得心情中",
+    overlay: true,
+    overlayStyle: {
+      "max-width": "480px",
+      margin: "0 auto",
+      right: "0",
+      left: "0",
+    },
+  });
   try {
     resetCompareData();
     const uid = userStore.user.uid;
@@ -59,6 +69,8 @@ const getDiaryData = async () => {
     }
   } catch {
     showFailToast("發生錯誤，請稍後再試");
+  } finally {
+    loadingToast.close();
   }
 };
 
@@ -254,10 +266,10 @@ const setEmotion = (emotion) => {
 <template>
   <div class="section">
     <div class="btn-container">
-      <div class="ellipsis-btn" @click="showOptions">
+      <div class="ellipsis-btn cursor-pointer" @click="showOptions">
         <van-icon size="1.2rem" name="ellipsis" color="#000000" />
       </div>
-      <div class="close-btn" @click="closePopup">
+      <div class="close-btn cursor-pointer" @click="closePopup">
         <van-icon size="1.2rem" name="cross" color="#000000" />
       </div>
     </div>
@@ -325,7 +337,11 @@ const setEmotion = (emotion) => {
       ></van-tabbar-item>
       <van-tabbar-item>
         <template #icon>
-          <van-uploader :after-read="afterRead" accept=".jpg,.jpeg,.png">
+          <van-uploader
+            class="cursor-pointer"
+            :after-read="afterRead"
+            accept=".jpg,.jpeg,.png"
+          >
             <van-icon name="photo-o" />
           </van-uploader>
         </template>

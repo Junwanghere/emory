@@ -7,7 +7,7 @@ import { auth } from "@/firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import Analysis from "@/views/Analysis/index.vue";
 import Calendar from "@/views/Calendar/index.vue";
-
+import NotFound from "@/views/NotFound/index.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL || "/"),
   routes: [
@@ -45,6 +45,7 @@ const router = createRouter({
       name: "auth",
       component: Auth,
     },
+    { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound }, // 通配符路由
   ],
 });
 

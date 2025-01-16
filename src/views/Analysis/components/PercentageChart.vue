@@ -118,7 +118,7 @@ watch(
 </script>
 <template>
   <div class="container w-fill p-5 border rounded-2xl bg-white mb-10">
-    <p class="mb-7">心情分佈</p>
+    <p class="mb-7 font-medium">心情分佈</p>
     <p class="text-center text-sm mb-6 text-gray-400" v-if="hasData">
       還沒有紀錄...
     </p>

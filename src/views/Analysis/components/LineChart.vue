@@ -25,24 +25,11 @@ ChartJS.register(
   TimeScale,
 );
 
-let delayed;
 const options = computed(() => {
   return {
     responsive: true,
     maintainAspectRatio: true,
     clip: false,
-    animation: {
-      onComplete: () => {
-        delayed = true;
-      },
-      delay: (context) => {
-        let delay = 0;
-        if (context.type === "data" && context.mode === "default" && !delayed) {
-          delay = context.dataIndex * 300 + context.datasetIndex * 100;
-        }
-        return delay;
-      },
-    },
     plugins: {
       legend: {
         display: false,
@@ -164,7 +151,7 @@ watch(monthlyData, (newData) => {
 </script>
 <template>
   <div class="border rounded-2xl bg-white">
-    <p class="pt-3 pl-3">心情流</p>
+    <p class="pt-3 pl-3 font-medium">心情流</p>
     <Line ref="lineChart" :data="data" :options="options" />
   </div>
 </template>

@@ -202,15 +202,15 @@ const userSignOut = () => {
         />
       </div>
     </div>
-    <div class="weekday-container flex w-full my-4">
+    <div class="weekday-container flex w-full mt-7 mb-4">
       <span v-for="item in weekday" :key="item.id" class="weekday">{{
         item
       }}</span>
     </div>
-    <div class="days-container">
+    <div class="days-container mt-8">
       <div
         v-for="item in dayList"
-        class="day-container pb-2 flex flex-col items-center"
+        class="day-container pb-4 flex flex-col items-center"
         :key="item.fullDate"
       >
         <div v-if="!item.day"></div>

@@ -177,7 +177,7 @@ const userSignOut = () => {
 </script>
 
 <template>
-  <div class="calendar-container p-3 bg-blue-50">
+  <div class="calendar-container p-3 bg-blue-50 relative">
     <div class="header">
       <span @click="userSignOut" class="absolute top-3 right-5 cursor-pointer"
         >登出</span
@@ -330,6 +330,7 @@ const userSignOut = () => {
 }
 
 .van-popup--bottom {
-  left: unset;
+  left: 0;
+  right: 0;
 }
 </style>

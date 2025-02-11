@@ -57,7 +57,7 @@ const options = computed(() => {
           autoSkip: false,
           padding: 15,
           stepSize: 1,
-          color: ["#C1E3DC", "#E5F5E2", "#FFFADF", "#FFE9D8", "#F3A2A2"],
+          color: ["#F3A2A2", "#FFE9D8", "#FFFADF", "#E5F5E2", "#C1E3DC"],
           backdropPadding: {
             x: 5,
           },
